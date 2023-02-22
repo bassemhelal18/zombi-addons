@@ -17,13 +17,13 @@ SITE_DESC = 'arabic vod'
  
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 
-KID_MOVIES = (URL_MAIN + '/category.php?cat=movies', 'showMovies')
-KID_CARTOON = (URL_MAIN + '/category.php?cat=series', 'showSeries')
+KID_MOVIES = (URL_MAIN + 'category.php?cat=movies', 'showMovies')
+KID_CARTOON = (URL_MAIN + 'category.php?cat=series', 'showSeries')
 
 
-URL_SEARCH = (URL_MAIN + '/search.php?keywords=', 'showMovies')
-URL_SEARCH_MOVIES = (URL_MAIN + '/search.php?keywords=', 'showMoviesSearch')
-URL_SEARCH_SERIES = (URL_MAIN + '/search.php?keywords=', 'showSeriesSearch')
+URL_SEARCH = (URL_MAIN + 'search.php?keywords=', 'showMovies')
+URL_SEARCH_MOVIES = (URL_MAIN + 'search.php?keywords=', 'showMoviesSearch')
+URL_SEARCH_SERIES = (URL_MAIN + 'search.php?keywords=', 'showSeriesSearch')
 FUNCTION_SEARCH = 'showMovies'
  
 def load():
@@ -48,8 +48,8 @@ def showSearchSeries():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/search.php?keywords='+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + 'search.php?keywords='+sSearchText
         showSeriesSearch(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -58,8 +58,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/search.php?keywords='+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + 'search.php?keywords='+sSearchText
         showMoviesSearch(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -265,7 +265,7 @@ def showMoviesLinks(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMoviesLinks', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -482,7 +482,7 @@ def showHosters():
             
                 sHosterUrl = url 
                 oHoster = cHosterGui().checkHoster(sHosterUrl)
-                if oHoster != False:
+                if oHoster:
                     oHoster.setDisplayName(sMovieTitle)
                     oHoster.setFileName(sMovieTitle)
                     cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -504,7 +504,7 @@ def showHosters():
             
                 sHosterUrl = url 
                 oHoster = cHosterGui().checkHoster(sHosterUrl)
-                if oHoster != False:
+                if oHoster:
                     oHoster.setDisplayName(sTitle)
                     oHoster.setFileName(sTitle)
                     cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

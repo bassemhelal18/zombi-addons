@@ -17,23 +17,23 @@ SITE_DESC = 'arabic vod'
  
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 
-MOVIE_EN = (URL_MAIN + '/movies', 'showMovies')
-MOVIE_HI = (URL_MAIN + '/hindi', 'showMovies')
-MOVIE_ASIAN = (URL_MAIN + '/asian-movies', 'showMovies')
-KID_MOVIES = (URL_MAIN + '/dubbed-movies', 'showMovies')
-SERIE_EN = (URL_MAIN + '/series', 'showSeries')
-REPLAYTV_NEWS = (URL_MAIN + '/tvshows', 'showSeries')
-ANIM_MOVIES = (URL_MAIN + '/anime-movies', 'showMovies')
-SERIE_ASIA = (URL_MAIN +'/asian-series', 'showSeries')
-ANIM_NEWS = (URL_MAIN + '/anime', 'showAnimes')
-DOC_NEWS = (URL_MAIN + '/movies-cats/documentary', 'showMovies')
-DOC_SERIES = (URL_MAIN + '/series_genres/documentary', 'showSeries')
-MOVIE_TOP = (URL_MAIN + '/movies_top_votes', 'showMovies')
-MOVIE_POP = (URL_MAIN + '/movies_top_views', 'showMovies')
+MOVIE_EN = (URL_MAIN + 'movies', 'showMovies')
+MOVIE_HI = (URL_MAIN + 'hindi', 'showMovies')
+MOVIE_ASIAN = (URL_MAIN + 'asian-movies', 'showMovies')
+KID_MOVIES = (URL_MAIN + 'dubbed-movies', 'showMovies')
+SERIE_EN = (URL_MAIN + 'series', 'showSeries')
+REPLAYTV_NEWS = (URL_MAIN + 'tvshows', 'showSeries')
+ANIM_MOVIES = (URL_MAIN + 'anime-movies', 'showMovies')
+SERIE_ASIA = (URL_MAIN +'asian-series', 'showSeries')
+ANIM_NEWS = (URL_MAIN + 'anime', 'showAnimes')
+DOC_NEWS = (URL_MAIN + 'movies-cats/documentary', 'showMovies')
+DOC_SERIES = (URL_MAIN + 'series_genres/documentary', 'showSeries')
+MOVIE_TOP = (URL_MAIN + 'movies_top_votes', 'showMovies')
+MOVIE_POP = (URL_MAIN + 'movies_top_views', 'showMovies')
 
-URL_SEARCH = (URL_MAIN + '/?s=', 'showSeries')
-URL_SEARCH_MOVIES = (URL_MAIN + '/?s=%D9%81%D9%8A%D9%84%D9%85+', 'showMovies')
-URL_SEARCH_SERIES = (URL_MAIN + '/?s=%D9%85%D8%B3%D9%84%D8%B3%D9%84+', 'showSeries')
+URL_SEARCH = (URL_MAIN + '?s=', 'showSeries')
+URL_SEARCH_MOVIES = (URL_MAIN + '?s=%D9%81%D9%8A%D9%84%D9%85+', 'showMovies')
+URL_SEARCH_SERIES = (URL_MAIN + '?s=%D9%85%D8%B3%D9%84%D8%B3%D9%84+', 'showSeries')
 FUNCTION_SEARCH = 'showMovies'
  
 def load():
@@ -96,8 +96,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/?s=%D9%81%D9%8A%D9%84%D9%85+'+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + '?s=%D9%81%D9%8A%D9%84%D9%85+'+sSearchText
         showMovies(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -106,8 +106,8 @@ def showSeriesSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/?s=%D9%85%D8%B3%D9%84%D8%B3%D9%84+'+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + '?s=%D9%85%D8%B3%D9%84%D8%B3%D9%84+'+sSearchText
         showSeries(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -162,7 +162,7 @@ def showMovies(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -218,7 +218,7 @@ def showSeries(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -270,7 +270,7 @@ def showAnimes(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showAnimes', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -453,7 +453,7 @@ def showEpisodes1():
         
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showEpisodes', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -531,7 +531,7 @@ def showLink():
             
             sHosterUrl = url 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                oHoster.setDisplayName(sMovieTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -578,7 +578,7 @@ def showHosters():
             
             sHosterUrl = url 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sDisplayTitle = sMovieTitle+sTitle
                oHoster.setDisplayName(sDisplayTitle)
                oHoster.setFileName(sMovieTitle)
@@ -601,7 +601,7 @@ def showHosters():
             
             sHosterUrl = url
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sDisplayTitle = sMovieTitle+sTitle
                oHoster.setDisplayName(sDisplayTitle)
                oHoster.setFileName(sMovieTitle)
@@ -624,7 +624,7 @@ def showHosters():
             
             sHosterUrl = url
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 sDisplayTitle = sMovieTitle+sTitle
                 oHoster.setDisplayName(sDisplayTitle)
                 oHoster.setFileName(sMovieTitle)
@@ -645,7 +645,7 @@ def showHosters():
             
             sHosterUrl = url
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sDisplayTitle = sMovieTitle+sTitle
                oHoster.setDisplayName(sDisplayTitle)
                oHoster.setFileName(sMovieTitle)

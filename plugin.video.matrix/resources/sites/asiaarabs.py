@@ -16,13 +16,13 @@ SITE_DESC = 'arabic vod'
  
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 
-MOVIE_ASIAN = (URL_MAIN + '/search/label/%D8%A3%D9%81%D9%84%D8%A7%D9%85', 'showMovies')
-SERIE_ASIA = (URL_MAIN + '/search/label/%D9%85%D8%B3%D9%84%D8%B3%D9%84%D8%A7%D8%AA', 'showSeries')
+MOVIE_ASIAN = (URL_MAIN + 'search/label/%D8%A3%D9%81%D9%84%D8%A7%D9%85', 'showMovies')
+SERIE_ASIA = (URL_MAIN + 'search/label/%D9%85%D8%B3%D9%84%D8%B3%D9%84%D8%A7%D8%AA', 'showSeries')
 
 
-URL_SEARCH = (URL_MAIN + '/search?q=', 'showMovies')
-URL_SEARCH_SERIES = (URL_MAIN + '/search?q=', 'showSeries')
-URL_SEARCH_MOVIES = (URL_MAIN + '/search?q=', 'showMovies')
+URL_SEARCH = (URL_MAIN + 'search?q=', 'showMovies')
+URL_SEARCH_SERIES = (URL_MAIN + 'search?q=', 'showSeries')
+URL_SEARCH_MOVIES = (URL_MAIN + 'search?q=', 'showMovies')
 FUNCTION_SEARCH = 'showMovies'
  
 def load():
@@ -47,8 +47,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/?s='+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + '?s='+sSearchText
         showSeries(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -230,7 +230,7 @@ def showEpisodes():
     if aResult[0] :
         m3url =  aResult[1][0]
         oRequest = cRequestHandler(m3url)
-        sHtmlContent1 = oRequest.request()
+        sHtmlContent = oRequest.request()
     sPattern =  '<a href="(https://www.asia4arabs.co.+?)" target'
     aResult = oParser.parse(sHtmlContent,sPattern)
     VSlog(aResult)
@@ -244,7 +244,7 @@ def showEpisodes():
     sPattern = 'iframes([^<]+)=.+?width="100%" height="400" src="(.+?)" frameborder='
 
     oParser = cParser()
-    aResult = oParser.parse(sHtmlContent1, sPattern)
+    aResult = oParser.parse(sHtmlContent, sPattern)
 
 	
     if aResult[0] :
@@ -265,16 +265,45 @@ def showEpisodes():
             if 'mystream' in sHosterUrl:
                 sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sTitle = sTitle+sMovieTitle
                oHoster.setDisplayName(sTitle)
                oHoster.setFileName(sTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
 	
-       
+    sPattern = '<a href="([^<]+)" target="_blank">(.+?)</a>'
+
+    oParser = cParser()
+    aResult = oParser.parse(sHtmlContent, sPattern)
+
+
+    if aResult[0]:
+        for aEntry in aResult[1]:
+
+            url = aEntry[0]
+            sTitle = aEntry[1].replace("الحلقة "," E")
+            if url.startswith('//'):
+               url = 'http:' + url
+
+            sHosterUrl = url
+            if "youtube" in sHosterUrl:
+                continue
+            if 'userload' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
+            if 'moshahda' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
+            if 'mystream' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
+            oHoster = cHosterGui().checkHoster(sHosterUrl)
+            if oHoster:
+               sTitle = sTitle+sMovieTitle
+               oHoster.setDisplayName(sTitle)
+               oHoster.setFileName(sTitle)
+               cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
     oGui.setEndOfDirectory()
  
  # ([^<]+) .+?
+
 def __checkForNextPage(sHtmlContent):
     sPattern = "href='([^<]+)' id='.+?' title='NextUrl'>"
 	
@@ -333,10 +362,45 @@ def showHosters():
             if 'mystream' in sHosterUrl:
                 sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sDisplayTitle = sMovieTitle+sTitle
                oHoster.setDisplayName(sDisplayTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
-                
+    
+    sPattern = '><a href="(.+?)".+?target="_blank">'
+    oParser = cParser()
+    aResult = oParser.parse(sHtmlContent, sPattern)
+
+	
+    if aResult[0] :
+        for aEntry in aResult[1]:
+            
+            url = str(aEntry)
+            sTitle = " " 
+            if url.startswith('//'):
+               url = 'http:' + url
+            
+            sHosterUrl = url
+            if "youtube" in sHosterUrl:
+                sTitle = "-trailer"
+             
+            if "blogger" in sHosterUrl:
+                continue
+            if ".jpg" in sHosterUrl:
+                continue
+            if ".jpeg" in sHosterUrl:
+                continue
+            if 'userload' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
+            if 'moshahda' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
+            if 'mystream' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
+            oHoster = cHosterGui().checkHoster(sHosterUrl)
+            if oHoster:
+               sDisplayTitle = sMovieTitle+sTitle
+               oHoster.setDisplayName(sDisplayTitle)
+               oHoster.setFileName(sMovieTitle)
+               cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)            
     oGui.setEndOfDirectory()

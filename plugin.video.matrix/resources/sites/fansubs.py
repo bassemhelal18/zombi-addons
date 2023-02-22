@@ -17,9 +17,9 @@ SITE_DESC = 'arabic vod'
 
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 
-ANIM_NEWS = (URL_MAIN+'/videos/latest?page_id=1', 'showMovies')
+ANIM_NEWS = (URL_MAIN+'videos/latest?page_id=1', 'showMovies')
 
-URL_SEARCH = (URL_MAIN+'/search?keyword=', 'showSearch')
+URL_SEARCH = (URL_MAIN+'search?keyword=', 'showSearch')
 FUNCTION_SEARCH = 'showSearch'
  
 def load():
@@ -38,8 +38,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN+'/search?keyword='+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN+'search?keyword='+sSearchText
         showMovies(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -87,7 +87,7 @@ def showMovies(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -135,7 +135,7 @@ def showHosters():
             
             sHosterUrl = url 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sDisplayTitle = sMovieTitle
                oHoster.setDisplayName(sDisplayTitle)
                oHoster.setFileName(sMovieTitle)
@@ -156,7 +156,7 @@ def showHosters():
             
             sHosterUrl = url 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                sDisplayTitle = sMovieTitle+' '+sTitle
                oHoster.setDisplayName(sDisplayTitle)
                oHoster.setFileName(sMovieTitle)

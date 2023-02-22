@@ -17,13 +17,13 @@ SITE_DESC = 'arabic vod'
 
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 
-ANIM_NEWS = (URL_MAIN + '/anime-season/%d8%ae%d8%b1%d9%8a%d9%81-%d8%b9%d8%a7%d9%85-2021/', 'showSeries')
-ANIM_MOVIES = (URL_MAIN + '/anime-type/movie-3/', 'showMovies')
+ANIM_NEWS = (URL_MAIN + 'anime-season/%d8%ae%d8%b1%d9%8a%d9%81-%d8%b9%d8%a7%d9%85-2021/', 'showSeries')
+ANIM_MOVIES = (URL_MAIN + 'anime-type/movie-3/', 'showMovies')
 
 
-URL_SEARCH = (URL_MAIN + '/?search_param=animes&s=', 'showMovies')
-URL_SEARCH_MOVIES = (URL_MAIN + '/?search_param=animes&s=', 'showMovies')
-URL_SEARCH_SERIES = (URL_MAIN + '/?search_param=animes&s=', 'showSeries')
+URL_SEARCH = (URL_MAIN + '?search_param=animes&s=', 'showMovies')
+URL_SEARCH_MOVIES = (URL_MAIN + '?search_param=animes&s=', 'showMovies')
+URL_SEARCH_SERIES = (URL_MAIN + '?search_param=animes&s=', 'showSeries')
 FUNCTION_SEARCH = 'showMovies'
  
 def load():
@@ -50,8 +50,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/?search_param=animes&s='+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + '?search_param=animes&s='+sSearchText
         showMovies(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -60,8 +60,8 @@ def showSeriesSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/?search_param=animes&s='+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + '?search_param=animes&s='+sSearchText
         showSeries(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -109,7 +109,7 @@ def showMovies(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -160,7 +160,7 @@ def showSeries(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -204,7 +204,7 @@ def showEpisodes():
         
 		
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showEpisodes', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -262,7 +262,7 @@ def showHosters():
                 if 'mystream' in sHosterUrl:
                     sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
                 oHoster = cHosterGui().checkHoster(sHosterUrl)
-                if oHoster != False:
+                if oHoster:
                     sDisplayTitle = sMovieTitle
                     oHoster.setDisplayName(sDisplayTitle)
                     oHoster.setFileName(sMovieTitle)
@@ -291,7 +291,7 @@ def showHosters():
             if 'mystream' in sHosterUrl:
                 sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

@@ -260,7 +260,7 @@ class cGui:
 
     # afficher les liens non playable
     def addFolder(self, oGuiElement, oOutputParameterHandler='', _isFolder=True):
-        if _isFolder is False:
+        if _isFolder:
             cGui.CONTENT = 'files'
 
         # recherche append les reponses

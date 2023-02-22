@@ -281,7 +281,7 @@ def getAction():
         # /tv/{tv_id}/season/{season_number}/episode/{episode_number}/rating
         numboard = oGui.showNumBoard('Min 0.5 - Max 10')
         if numboard != None:
-            if sSeason != False and sEpisode != False:
+            if sSeason != False and sEpisode:
                 sAction = '%s/%s/season/%s/episode/%s/rating' % (sCat, sTMDB, sSeason, sEpisode)
             else:
                 sAction = '%s/%s/rating' % (sCat, sTMDB)
@@ -399,7 +399,7 @@ def showSearchMovie():
     oGui = cGui()
 
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         showMovies(sSearchText.replace(' ', '+'))
         # oGui.setEndOfDirectory()
         return
@@ -409,7 +409,7 @@ def showSearchSerie():
     oGui = cGui()
 
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         showSeries(sSearchText.replace(' ', '+'))
         # oGui.setEndOfDirectory()
         return
@@ -419,7 +419,7 @@ def showSearchActor():
     oGui = cGui()
 
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         showActors(sSearchText.replace(' ', '+'))
         # oGui.setEndOfDirectory()
         return

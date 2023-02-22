@@ -37,16 +37,7 @@ def showMovies(sSearch = ''):
  
     oRequestHandler = cRequestHandler(sUrl)
     sHtmlContent = oRequestHandler.request()
-    oParser = cParser()
-
-    # (.+?) ([^<]+)
-
-    sPattern = 'rel="canonical" href="(.+?)" />'
-    aResult = oParser.parse(sHtmlContent, sPattern)
     
-    if (aResult[0]):
-        URL_MAIN = aResult[1][0]
-        VSlog(URL_MAIN)
 
 # ([^<]+) .+? (.+?)
 
@@ -95,7 +86,7 @@ def showLive():
  
     oRequestHandler = cRequestHandler(sUrl)
     oRequestHandler.addHeaderEntry('User-Agent', 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1')
-    oRequestHandler.addHeaderEntry('authority', 'beinmatch.one')
+    oRequestHandler.addHeaderEntry('authority', 'beinmatch.life')
     sHtmlContent = oRequestHandler.request()
     oParser = cParser()
     # (.+?) # ([^<]+) .+? 
@@ -114,7 +105,7 @@ def showLive():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -142,7 +133,7 @@ def showLive():
             
 
                      oHoster = cHosterGui().checkHoster(sHosterUrl)
-                     if oHoster != False:
+                     if oHoster:
                                oHoster.setDisplayName(sMovieTitle)
                                oHoster.setFileName(sMovieTitle)
                                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -155,7 +146,7 @@ def showLive():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -209,7 +200,7 @@ def showHosters():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

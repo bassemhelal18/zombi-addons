@@ -18,17 +18,17 @@ SITE_DESC = 'arabic vod'
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
  
 
-MOVIE_AR = (URL_MAIN +'/movies?page=1', 'showMovies')
-SERIE_AR = (URL_MAIN +'/series?page=1', 'showSeries')
+MOVIE_AR = (URL_MAIN +'movies?page=1', 'showMovies')
+SERIE_AR = (URL_MAIN +'series?page=1', 'showSeries')
 
-RAMADAN_SERIES = (URL_MAIN +'/ramadan?page=1', 'showSeries')
+RAMADAN_SERIES = (URL_MAIN +'ramadan?page=1', 'showSeries')
 
-REPLAYTV_PLAY = (URL_MAIN +'/show/205952/%D9%85%D8%B3%D8%B1%D8%AD%D9%8A%D8%A7%D8%AA-%D8%B2%D9%85%D8%A7%D9%86?page=1', 'showEps')
-ISLAM_SHOWS = (URL_MAIN +'/programs/30349/%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A7%D8%AA?page=1', 'showSeries')
+REPLAYTV_PLAY = (URL_MAIN +'show/205952/%D9%85%D8%B3%D8%B1%D8%AD%D9%8A%D8%A7%D8%AA-%D8%B2%D9%85%D8%A7%D9%86?page=1', 'showEps')
+ISLAM_SHOWS = (URL_MAIN +'programs/30349/%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A7%D8%AA?page=1', 'showSeries')
 
-URL_SEARCH = (URL_MAIN +'/search_result?term=', 'showMovies')
-URL_SEARCH_MOVIES = (URL_MAIN +'/search_result?term=', 'showMoviesSearch')
-URL_SEARCH_SERIES= (URL_MAIN + '/search_result?term=', 'showSeriesSearch')
+URL_SEARCH = (URL_MAIN +'search_result?term=', 'showMovies')
+URL_SEARCH_MOVIES = (URL_MAIN +'search_result?term=', 'showMoviesSearch')
+URL_SEARCH_SERIES= (URL_MAIN + 'search_result?term=', 'showSeriesSearch')
 FUNCTION_SEARCH = 'showMovies'
  
 def load():
@@ -57,8 +57,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN +'/search_result?term='+sSearchText+'&page=1'
+    if sSearchText:
+        sUrl = URL_MAIN +'search_result?term='+sSearchText+'&page=1'
         showMoviesSearch(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -67,8 +67,8 @@ def showSearchSeries():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN +'/search_result?term='+sSearchText+'&page=1'
+    if sSearchText:
+        sUrl = URL_MAIN +'search_result?term='+sSearchText+'&page=1'
         showSeriesSearch(sUrl)
         oGui.setEndOfDirectory()
         return   
@@ -435,7 +435,7 @@ def showHosters():
                url = 'http:' + url
             sHosterUrl = url  
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                oHoster.setDisplayName(sMovieTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

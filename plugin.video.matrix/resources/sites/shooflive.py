@@ -85,7 +85,7 @@ def showSeriesSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         sUrl = URL_MAIN + '/search/'+sSearchText
         showSeries(sUrl)
         oGui.setEndOfDirectory()
@@ -95,7 +95,7 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         sUrl = URL_MAIN + '/search/'+sSearchText
         showMovies(sUrl)
         oGui.setEndOfDirectory()
@@ -409,14 +409,9 @@ def showHosters():
 
     oParser = cParser()         
 
-    sURL_MAIN='0'
-    # (.+?) ([^<]+)
-    sPattern = 'title="الرئيسية" href="(.+?)">'
-    aResult = oParser.parse(sHtmlContent, sPattern)    
-    if (aResult[0]):
-        sURL_MAIN = aResult[1][0]
+    
 			
-    sPattern =  'data-id="(.+?)">' 
+    sPattern =  'data-id="(.+?)".+?>' 
     aResult = oParser.parse(sHtmlContent,sPattern)
     if aResult[0] :
         mId = aResult[1][0] 
@@ -424,7 +419,7 @@ def showHosters():
     s = requests.Session()            
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0'}
     data = {'id':mId,'action':'getpostServers'}
-    r = s.post(sURL_MAIN +'/wp-admin/admin-ajax.php', headers=headers,data = data)
+    r = s.post(URL_MAIN +'/wp-admin/admin-ajax.php', headers=headers,data = data)
     sHtmlContent = r.content.decode('utf8')
             
     sPattern =  '<a class="watchNow" href="([^<]+)" target=' 
@@ -437,13 +432,13 @@ def showHosters():
     import requests
     s = requests.Session()            
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0',
-							'Referer': sURL_MAIN }
+							'Referer': URL_MAIN }
     r = s.get(m3url, headers=headers)
     sHtmlContent = r.content.decode('utf8')
 
     # ([^<]+) .+? (.+?)
                
-    sPattern = '<iframe src="(.+?)" id="srcFrame" frameborder='
+    sPattern = '<iframe src="(.+?)".+?id="srcFrame".+?frameborder=.+?</iframe>'
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
 
@@ -457,13 +452,13 @@ def showHosters():
             if sHosterUrl.startswith('//'):
                 sHosterUrl = 'http:' + sHosterUrl
             if 'userload' in sHosterUrl:
-                sHosterUrl = sHosterUrl + "|Referer=" + sURL_MAIN
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
             if 'moshahda' in sHosterUrl:
-                sHosterUrl = sHosterUrl + "|Referer=" + sURL_MAIN 
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
             if 'mystream' in sHosterUrl:
-                sHosterUrl = sHosterUrl + "|Referer=" + sURL_MAIN   
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN   
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

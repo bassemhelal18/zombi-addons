@@ -16,12 +16,12 @@ SITE_DESC = 'arabic vod'
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 
 
-SERIE_TR = (URL_MAIN + '/all-series/', 'showSeries')
-MOVIE_TURK = (URL_MAIN + '/category/الأفلام-التركية/', 'showMovies')
+SERIE_TR = (URL_MAIN + 'all-series/', 'showSeries')
+MOVIE_TURK = (URL_MAIN + 'category/الأفلام-التركية/', 'showMovies')
 
-URL_SEARCH = (URL_MAIN + '/search/', 'showSeries')
-URL_SEARCH_MOVIES = (URL_MAIN + '/search/', 'showMovies')
-URL_SEARCH_SERIES = (URL_MAIN + '/search/', 'showSeries')
+URL_SEARCH = (URL_MAIN + 'search/', 'showSeries')
+URL_SEARCH_MOVIES = (URL_MAIN + 'search/', 'showMovies')
+URL_SEARCH_SERIES = (URL_MAIN + 'search/', 'showSeries')
 FUNCTION_SEARCH = 'showSeries'
  
 def load():
@@ -48,8 +48,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/search/'+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + 'search/'+sSearchText
         showMovies(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -58,8 +58,8 @@ def showSeriesSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/search/'+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + 'search/'+sSearchText
         showSeries(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -77,7 +77,7 @@ def showMovies(sSearch = ''):
 
      # (.+?) ([^<]+) .+?
 
-    sPattern = '<a href="([^<]+)" title=([^<]+)">.+?style="background-image:url(([^<]+));">'
+    sPattern = '<a href="([^<]+)" title=".+?">.+?<div class="imgBg" style="([^<]+)">.+?<div class="title">([^<]+)</div>'
  
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
@@ -95,11 +95,11 @@ def showMovies(sSearch = ''):
             if "فيلم" not in aEntry[2]:
                 continue
  
-            sTitle = aEntry[1].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("برنامج","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","")
             siteUrl = aEntry[0]
-            sThumb = aEntry[2].replace("(","").replace(")","")
-            if sThumb.startswith('//'):
-               sThumb = 'http:' + sThumb
+            sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("برنامج","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace('"','')
+            
+            sThumb = aEntry[1].replace(");","").replace("background-image:url(","")
+            
             sYear = ''
             sDesc = ''
 
@@ -114,7 +114,7 @@ def showMovies(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -137,13 +137,13 @@ def showSeries(sSearch = ''):
     VSlog(cook)
     oRequestHandler.setRequestType(1)
     oRequestHandler.addHeaderEntry('User-Agent', 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1')
-    oRequestHandler.addHeaderEntry('host', 'm.eshiq.net')
+    oRequestHandler.addHeaderEntry('host', 'ee.e3sk.net')
     oRequestHandler.addHeaderEntry('referer', sUrl)
     oRequestHandler.addHeaderEntry('Cookie', cook)
     sHtmlContent = oRequestHandler.request()
      # (.+?) ([^<]+) .+?
 
-    sPattern = '<article class.+?<a href="(.+?)" title=.+?style="background-image:url(.+?);">.+?class="title">(.+?)</div>'
+    sPattern = '<a href="([^<]+)" title=".+?">.+?<div class="poster"><div class="imgSer" style="([^<]+)"></div></div> <div class="title">([^<]+)</div>'
 
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
@@ -163,7 +163,7 @@ def showSeries(sSearch = ''):
  
             sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("برنامج","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","")
             siteUrl = aEntry[0]
-            sThumb = aEntry[1].replace("(","").replace(")","")
+            sThumb = aEntry[1].replace(");","").replace("background-image:url(","")
             sDesc = ""
 
 
@@ -177,7 +177,7 @@ def showSeries(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -214,7 +214,7 @@ def showEps():
     aResult = oParser.parse(sHtmlContent, sPattern)
     
    
-    if aResult[0] :
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()  
         for aEntry in aResult[1]:
 
@@ -222,9 +222,12 @@ def showEps():
             sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("الموسم"," S").replace("S ","S").replace("الحلقة "," E").replace("حلقة "," E")
             siteUrl = aEntry[0] 
             import base64
+            if '?post=' in siteUrl:
+                url_tmp = siteUrl.split('?post=')[-1].replace('%3D','=')
+                siteUrl = base64.b64decode(url_tmp).decode('utf8',errors='ignore')
             if '?url=' in siteUrl:
                 url_tmp = siteUrl.split('?url=')[-1].replace('%3D','=')
-                siteUrl = base64.b64decode(url_tmp).decode('utf8',errors='ignore')
+                siteUrl = base64.b64decode(url_tmp).decode('utf8',errors='ignore')                
             sThumb = sThumb
             sDesc = ''
  
@@ -254,7 +257,7 @@ def showHosters():
         m3url = aResult[1][0]
         oRequestHandler = cRequestHandler(m3url)
         oRequestHandler.addHeaderEntry('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0')
-        oRequestHandler.addHeaderEntry('referer', 'https://m.eshiq.net/')
+        oRequestHandler.addHeaderEntry('referer', 'https://ee.e3sk.net/')
         sHtmlContent = oRequestHandler.request() 
 
     # (.+?) .+? ([^<]+)        	
@@ -282,6 +285,8 @@ def showHosters():
                url =  'https://player.vimeo.com/video/'+url+'?title=0&byline=0'
             if 'youtube' in host:
                url =  'https://www.youtube.com/watch?v='+url
+            if 'dailymotion' in host:
+               url =  'https://www.youtube.com/watch?v='+url
             if url.startswith('//'):
                url = 'http:' + url
 				
@@ -293,9 +298,11 @@ def showHosters():
             if 'moshahda' in sHosterUrl:
                 sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
             if 'mystream' in sHosterUrl:
-                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN    
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
+            if 'dailymotion' in sHosterUrl:
+                sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN       
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                oHoster.setDisplayName(sMovieTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -319,10 +326,34 @@ def showHosters():
             if 'mystream' in sHosterUrl:
                 sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN    
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                oHoster.setDisplayName(sMovieTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
+	
+    sPattern = '<span><a target="_self" href="(.+?)"><img src=".+?"></a></span> </code>'
+    if aResult[0] :
+            
+            for aEntry in aResult[1]:
+        
+                url = aEntry
+                if url.startswith('//'):
+                    url = 'https:' + url
 				
+					
+            
+                sHosterUrl = url 
+                if 'userload' in sHosterUrl:
+                    sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
+                if 'moshahda' in sHosterUrl:
+                    sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
+                if 'mystream' in sHosterUrl:
+                    sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
+                oHoster = cHosterGui().checkHoster(sHosterUrl)
+                if oHoster:
+                    sDisplayTitle = sMovieTitle
+                    oHoster.setDisplayName(sDisplayTitle)
+                    oHoster.setFileName(sMovieTitle)
+                    cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)			
               
     oGui.setEndOfDirectory()

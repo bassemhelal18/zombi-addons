@@ -338,7 +338,7 @@ class cHoster(iHoster):
         # get the page
         sHtmlContent = self.getRedirectHtml(web_url, sId, True)
 
-        if sHtmlContent is False:
+        if not sHtmlContent:
             VSlog('Passage en mode barbare')
             # ok ca a rate on passe toutes les url de AllUrl
             for i in AllUrl:

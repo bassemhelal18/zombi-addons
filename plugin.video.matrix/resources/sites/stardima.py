@@ -49,7 +49,7 @@ def showSearchMovies():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         sUrl = URL_MAIN +'/?s='+sSearchText
         showMoviesSearch(sUrl)
         oGui.setEndOfDirectory()
@@ -59,7 +59,7 @@ def showSearchSeries():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         sUrl = URL_MAIN +'/?s='+sSearchText
         showSeriesSearch(sUrl)
         oGui.setEndOfDirectory()
@@ -247,7 +247,7 @@ def showMovies(sSearch = ''):
             oGui.addMovie(SITE_IDENTIFIER, 'showHosters', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -298,7 +298,7 @@ def showSeries(sSearch = ''):
             oGui.addTV(SITE_IDENTIFIER, 'showEpisodes', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -345,7 +345,7 @@ def showEpisodes():
             oGui.addEpisode(SITE_IDENTIFIER, 'showHosters', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showEpisodes', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -376,19 +376,54 @@ def showHosters():
  
     oRequestHandler = cRequestHandler(sUrl)
     sHtmlContent = oRequestHandler.request()
-            
-    sPattern =  'name=postid value=(.+?)> '
+
+    sPattern =  '<a href=(.+?) target=_blank>Download<'
+    oParser = cParser()
+    aResult = oParser.parse(sHtmlContent, sPattern)
+
+
+    if aResult[0]:
+       total = len(aResult[1])
+       for aEntry in aResult[1]:       
+           url = aEntry
+           oRequestHandler = cRequestHandler(url)
+           sHtmlContent1 = oRequestHandler.request()
+
+
+           sPattern =  "value='(.+?)'>"
+           oParser = cParser()
+           aResult = oParser.parse(sHtmlContent1, sPattern)
+
+
+           if aResult[0]:
+              total = len(aResult[1])
+              for aEntry in aResult[1]:       
+                  url = aEntry
+                  sHosterUrl = url 
+                  oHoster = cHosterGui().checkHoster(sHosterUrl)
+                  if oHoster:
+                     oHoster.setDisplayName(sMovieTitle)
+                     oHoster.setFileName(sMovieTitle)
+                     cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
+
+    sPattern =  'data-type=(.+?) data-post=(.+?) data-nume=(.+?)>'
     aResult = oParser.parse(sHtmlContent,sPattern)
-    if aResult[0] :
-        m3url = aResult[1][0]
-    import requests
-    s = requests.Session()            
-    headers = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1',
-							'Referer': Quote(sUrl)}
-    data = {'post':m3url,'action':'doo_player_ajax','nume':'1','type':'tv'}
-    r = s.post(URL_MAIN + '/wp-admin/admin-ajax.php', headers=headers,data = data)
-    sHtmlContent = r.content.decode('utf8')
-    VSlog(data)
+    if aResult[0]:
+       total = len(aResult[1])
+       for aEntry in aResult[1]: 
+           m3url = aEntry[1]
+           mtype = aEntry[0]
+           mnume = aEntry[2]
+           import requests
+           s = requests.Session()            
+           headers = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1',
+							'Referer': URL_MAIN}
+           data = {'post':m3url,'action':'doo_player_ajax','nume':mnume,'type':mtype}
+           r = s.post(URL_MAIN + '/wp-admin/admin-ajax.php', headers=headers,data = data)
+           sHtmlContent = r.content.decode('utf8')
+           VSlog(data)
+           VSlog(sHtmlContent)
+    
 
     # (.+?) .+? ([^<]+)
                
@@ -409,7 +444,7 @@ def showHosters():
             
            sHosterUrl = url 
            oHoster = cHosterGui().checkHoster(sHosterUrl)
-           if oHoster != False:
+           if oHoster:
                oHoster.setDisplayName(sMovieTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -438,7 +473,7 @@ def showHosters():
             
            sHosterUrl = url 
            oHoster = cHosterGui().checkHoster(sHosterUrl)
-           if oHoster != False:
+           if oHoster:
                oHoster.setDisplayName(sMovieTitle)
                oHoster.setFileName(sMovieTitle)
                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

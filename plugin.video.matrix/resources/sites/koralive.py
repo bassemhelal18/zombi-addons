@@ -82,15 +82,18 @@ def showLive():
     sUrl = oInputParameterHandler.getValue('siteUrl')
     sMovieTitle = oInputParameterHandler.getValue('sMovieTitle')
     sThumb = oInputParameterHandler.getValue('sThumb')
-  
     oRequestHandler = cRequestHandler(sUrl)
     sHtmlContent = oRequestHandler.request()
     oParser = cParser()
+    URLMAIN = sUrl.split('/')[2]
+    URLMAIN = 'https://' + URLMAIN
       # (.+?) ([^<]+) .+?
     sPattern = 'iframe" src="(.+?)" width'
     aResult = oParser.parse(sHtmlContent, sPattern)   
     if (aResult[0]):
         sUrl = aResult[1][0]
+        if sUrl.startswith('/'):
+           sUrl = URLMAIN + sUrl
         oRequestHandler = cRequestHandler(sUrl)
         sHtmlContent = oRequestHandler.request()
     # (.+?) # ([^<]+) .+? 
@@ -99,6 +102,8 @@ def showLive():
        aResult = oParser.parse(sHtmlContent, sPattern)
        if (aResult[0]):
            siteUrl = aResult[1][0]
+           if siteUrl.startswith('/'):
+               siteUrl = URLMAIN + siteUrl
        import requests    
        oRequestHandler = cRequestHandler(siteUrl)
        hdr = {'User-Agent' : 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1','referer' : URL_MAIN}
@@ -110,6 +115,8 @@ def showLive():
        aResult = oParser.parse(sHtmlContent, sPattern)
        if (aResult[0]):
            siteUrl = aResult[1][0]
+           if siteUrl.startswith('/'):
+               siteUrl = URL_MAIN + siteUrl
        import requests    
        oRequestHandler = cRequestHandler(siteUrl)
        hdr = {'User-Agent' : 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1','referer' : URL_MAIN}
@@ -148,13 +155,13 @@ def showLive():
                for aEntry in aResult[1]:
                    url_tmp = aEntry
                    url = base64.b64decode(url_tmp).decode('utf8',errors='ignore')
-                   VSlog(url)
+                   
                    sHosterUrl = url+ '|User-Agent=' + "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36" + '&Referer='+ siteUrl
                    sMovieTitle = sMovieTitle
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)	
@@ -170,7 +177,7 @@ def showLive():
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -185,7 +192,7 @@ def showLive():
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -200,7 +207,7 @@ def showLive():
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -214,7 +221,7 @@ def showLive():
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -230,7 +237,7 @@ def showLive():
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -245,7 +252,7 @@ def showLive():
                    if 'vimeo' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -273,7 +280,7 @@ def showLive():
                           if 'vimeo' in sHosterUrl:
                               sHosterUrl = sHosterUrl + "|Referer=" + sUrl
                           oHoster = cHosterGui().checkHoster(sHosterUrl)
-                          if oHoster != False:
+                          if oHoster:
                               oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                               oHoster.setFileName(sMovieTitle)
                               cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -306,7 +313,7 @@ def showLive():
             
 
                            oHoster = cHosterGui().checkHoster(sHosterUrl)
-                           if oHoster != False:
+                           if oHoster:
                                oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                                oHoster.setFileName(sMovieTitle)
                                cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -314,7 +321,7 @@ def showLive():
     if 'streamable' in sUrl:
         sHosterUrl = sUrl.split('?src=')[1]
         oHoster = cHosterGui().checkHoster(sHosterUrl)
-        if oHoster != False:
+        if oHoster:
            oHoster.setDisplayName(sMovieTitle)
            oHoster.setFileName(sMovieTitle)
            cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -333,7 +340,7 @@ def showHosters():
 
 
     oRequestHandler = cRequestHandler(sUrl)
-    hdr = {'User-Agent' : 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Mobile Safari/537.36','Origin' : 'live.360koralive.com','Referer' : 'https://live.360koralive.com'}
+    hdr = {'User-Agent' : 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Mobile Safari/537.36','Origin' : 'kora.360kora.live','Referer' : 'https://kora.360kora.live'}
     St=requests.Session()              
     sHtmlContent = St.get(sUrl,headers=hdr).content.decode('utf-8')            
 
@@ -391,7 +398,7 @@ def showHosters():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -447,7 +454,7 @@ def showHosters():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -478,7 +485,7 @@ def showHosters():
                 
             sHosterUrl = url
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sTitle)
                 oHoster.setFileName(sTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

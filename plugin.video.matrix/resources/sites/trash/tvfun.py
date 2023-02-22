@@ -84,7 +84,7 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
+    if sSearchText:
         sUrl = URL_MAIN + '/q/' +sSearchText
         showSeriesSearch(sUrl)
         oGui.setEndOfDirectory()
@@ -478,7 +478,7 @@ def showHosters():
             
                    sHosterUrl = url 
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        sDisplayTitle = sMovieTitle+sTitle
                        oHoster.setDisplayName(sDisplayTitle)
                        oHoster.setFileName(sDisplayTitle)

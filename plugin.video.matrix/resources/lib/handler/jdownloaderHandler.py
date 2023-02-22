@@ -10,11 +10,11 @@ class cJDownloaderHandler:
     DIALOG = dialog()
 
     def sendToJDownloader(self, sUrl):
-        if self.__checkConfig() is False:
+        if not self.__checkConfig():
             VSlog('Settings ueberpruefen (XBMC)')
             return False
 
-        if self.__checkConnection() is False:
+        if not self.__checkConnection():
             VSlog('Verbindung fehlgeschlagen (JD aus?)')
             return False
 

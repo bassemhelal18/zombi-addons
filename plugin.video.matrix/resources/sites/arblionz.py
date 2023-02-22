@@ -17,30 +17,30 @@ SITE_DESC = 'arabic vod'
 
 URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
  
-RAMADAN_SERIES = (URL_MAIN + '/category/series/arabic-series/%d9%85%d8%b3%d9%84%d8%b3%d9%84%d8%a7%d8%aa-%d8%b1%d9%85%d8%b6%d8%a7%d9%86-2022/', 'showSeries')
-MOVIE_EN = (URL_MAIN + '/category/movies/english-movies/', 'showMovies')
-MOVIE_4k = (URL_MAIN + '/Quality/4k/', 'showMovies')
-MOVIE_AR = (URL_MAIN + '/category/movies/arabic-movies/', 'showMovies')
-MOVIE_HI = (URL_MAIN + '/category/movies/indian-movies/', 'showMovies')
-MOVIE_ASIAN = (URL_MAIN + '/category/movies/asian-movies/', 'showMovies')
-KID_MOVIES = (URL_MAIN + '/category/anime-cartoon/cartoon/', 'showMovies')
-SERIE_TR = (URL_MAIN + '/category/series/turkish-series-translated-20221/', 'showSeries')
+RAMADAN_SERIES = (URL_MAIN + 'category/series/arabic-series/%d9%85%d8%b3%d9%84%d8%b3%d9%84%d8%a7%d8%aa-%d8%b1%d9%85%d8%b6%d8%a7%d9%86-2022/', 'showSeries')
+MOVIE_EN = (URL_MAIN + 'category/movies/english-movies/', 'showMovies')
+MOVIE_4k = (URL_MAIN + 'Quality/4k/', 'showMovies')
+MOVIE_AR = (URL_MAIN + 'category/movies/arabic-movies/', 'showMovies')
+MOVIE_HI = (URL_MAIN + 'category/movies/indian-movies/', 'showMovies')
+MOVIE_ASIAN = (URL_MAIN + 'category/movies/asian-movies/', 'showMovies')
+KID_MOVIES = (URL_MAIN + 'category/anime-cartoon/cartoon/', 'showMovies')
+SERIE_TR = (URL_MAIN + 'category/series/turkish-series-translated-20221/', 'showSeries')
 
-SERIE_TR_AR = (URL_MAIN + '/category/turkish-series-dubbed/', 'showSeries')
-SERIE_EN = (URL_MAIN + '/category/series/english-series/', 'showSeries')
-SERIE_AR = (URL_MAIN + '/category/series/arabic-series/', 'showSeries')
-SERIE_ASIA = (URL_MAIN + '/category/series/asian-series/', 'showSeries')
-SERIE_HEND = (URL_MAIN + '/category/series/%d9%85%d8%b3%d9%84%d8%b3%d9%84%d8%a7%d8%aa-%d9%87%d9%86%d8%af%d9%8a%d8%a9/', 'showSeries')
-SERIE_LATIN = (URL_MAIN + '/category/series/%d9%85%d8%b3%d9%84%d8%b3%d9%84%d8%a7%d8%aa-%d9%85%d9%83%d8%b3%d9%8a%d9%83%d9%8a/', 'showSeries')
+SERIE_TR_AR = (URL_MAIN + 'category/turkish-series-dubbed/', 'showSeries')
+SERIE_EN = (URL_MAIN + 'category/series/english-series/', 'showSeries')
+SERIE_AR = (URL_MAIN + 'category/series/arabic-series/', 'showSeries')
+SERIE_ASIA = (URL_MAIN + 'category/series/asian-series/', 'showSeries')
+SERIE_HEND = (URL_MAIN + 'category/series/%d9%85%d8%b3%d9%84%d8%b3%d9%84%d8%a7%d8%aa-%d9%87%d9%86%d8%af%d9%8a%d8%a9/', 'showSeries')
+SERIE_LATIN = (URL_MAIN + 'category/series/%d9%85%d8%b3%d9%84%d8%b3%d9%84%d8%a7%d8%aa-%d9%85%d9%83%d8%b3%d9%8a%d9%83%d9%8a/', 'showSeries')
 
-ANIM_NEWS = (URL_MAIN + '/category/series/anime/', 'showSeries')
+ANIM_NEWS = (URL_MAIN + 'category/series/anime/', 'showSeries')
 
-REPLAYTV_NEWS = (URL_MAIN + '/category/tv-show/', 'showSeries')
-REPLAYTV_PLAY = (URL_MAIN + '/category/other-shows/theater/', 'showSeries')
-SPORT_FOOT = (URL_MAIN + '/category/other-shows/sport/', 'showMovies')
-URL_SEARCH = (URL_MAIN + '/search/', 'showMovies')
-URL_SEARCH_MOVIES = (URL_MAIN + '/search/', 'showMovies')
-URL_SEARCH_SERIES = (URL_MAIN + '/search/', 'showSeries')
+REPLAYTV_NEWS = (URL_MAIN + 'category/tv-show/', 'showSeries')
+REPLAYTV_PLAY = (URL_MAIN + 'category/other-shows/theater/', 'showSeries')
+SPORT_FOOT = (URL_MAIN + 'category/other-shows/sport/', 'showMovies')
+URL_SEARCH = (URL_MAIN + 'search/', 'showMovies')
+URL_SEARCH_MOVIES = (URL_MAIN + 'search/', 'showMovies')
+URL_SEARCH_SERIES = (URL_MAIN + 'search/', 'showSeries')
 FUNCTION_SEARCH = 'showMovies'
  
 def load():
@@ -101,7 +101,7 @@ def load():
     oOutputParameterHandler.addParameter('siteUrl', REPLAYTV_PLAY[0])
     oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'مسرحيات', 'msrh.png', oOutputParameterHandler)
     
-    oOutputParameterHandler.addParameter('siteUrl', URL_MAIN + '/category/%d8%a8%d8%b1%d8%a7%d9%85%d8%ac-%d8%b9%d8%b1%d8%a8%d9%8a/')
+    oOutputParameterHandler.addParameter('siteUrl', URL_MAIN + 'category/%d8%a8%d8%b1%d8%a7%d9%85%d8%ac-%d8%b9%d8%b1%d8%a8%d9%8a/')
     oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'برامج عربي', 'brmg.png', oOutputParameterHandler)
   
     oGui.setEndOfDirectory()
@@ -110,8 +110,8 @@ def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/search/'+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + 'search/'+sSearchText
         showMovies(sUrl)
         oGui.setEndOfDirectory()
         return 
@@ -120,8 +120,8 @@ def showSearchSeries():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText != False:
-        sUrl = URL_MAIN + '/search/'+sSearchText
+    if sSearchText:
+        sUrl = URL_MAIN + 'search/'+sSearchText
         showSeries(sUrl)
         oGui.setEndOfDirectory()
         return
@@ -211,7 +211,7 @@ def showMovies(sSearch = ''):
         progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
@@ -431,16 +431,14 @@ def showHosters():
  
     oRequestHandler = cRequestHandler(sUrl)
     sHtmlContent = oRequestHandler.request()
-
     oParser = cParser()
+
     sPattern = ',"homeUrl":"(.+?)"}'
     aResult = oParser.parse(sHtmlContent, sPattern)
     
     if (aResult[0]):
         URL_MAIN = aResult[1][0]
         VSlog(URL_MAIN)
-    # ([^<]+) .+?
-
     
     #Recuperation infos
     sNote = ''
@@ -462,19 +460,19 @@ def showHosters():
     oRequestHandler.addHeaderEntry('Cookie', cook)
     oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
     oRequestHandler.addHeaderEntry('Referer', Quote(sUrl))
-    oRequestHandler.addHeaderEntry('origin', "arlionz.store")
+    oRequestHandler.addHeaderEntry('origin', "tv.arlionztv.store")
     sHtmlContent = oRequestHandler.request()
 
     sPattern = '<li data-i="([^<]+)" data-id="([^<]+)" class'
     aResult = oParser.parse(sHtmlContent, sPattern)	
-    if aResult[0] :
+    if aResult[0]:
         for aEntry in aResult[1]:
             link = URL_MAIN + '/Embedder/'+aEntry[1]+'/'+aEntry[0]
             oRequestHandler = cRequestHandler(link)
             cook = oRequestHandler.GetCookies()
             oRequestHandler.setRequestType(1)
             oRequestHandler.addHeaderEntry('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0')
-            oRequestHandler.addHeaderEntry('origin', "arlionz.store")
+            oRequestHandler.addHeaderEntry('origin', "tv.arlionztv.store")
             oRequestHandler.addHeaderEntry('Cookie', cook)
             oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
             oRequestHandler.addHeaderEntry('Referer', Quote(sUrl))
@@ -487,7 +485,7 @@ def showHosters():
             aResult = oParser.parse(sHtmlContent, sPattern)
 
 	
-            if aResult[0] :
+            if aResult[0]:
                for aEntry in aResult[1]:
             
                    url = aEntry
@@ -499,7 +497,7 @@ def showHosters():
                    if 'mystream' in sHosterUrl:
                        sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                        oHoster.setDisplayName(sMovieTitle)
                        oHoster.setFileName(sMovieTitle)
                        cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -510,7 +508,6 @@ def showHosters():
     cook = oRequestHandler.GetCookies()
     oRequestHandler.setRequestType(1)
     oRequestHandler.addHeaderEntry('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0')
-    
     oRequestHandler.addHeaderEntry('Cookie', cook)
     oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
     oRequestHandler.addHeaderEntry('Referer', Quote(sUrl))
@@ -539,7 +536,7 @@ def showHosters():
             if 'mystream' in sHosterUrl:
                 sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -554,7 +551,7 @@ def __checkForNextPage(sHtmlContent):
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
  
-    if aResult[0] :
+    if aResult[0]:
         return URL_MAIN+aResult[1][0]
 
     return False

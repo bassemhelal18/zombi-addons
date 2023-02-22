@@ -74,17 +74,7 @@ def showMovies():
  
     oGui.setEndOfDirectory()
 
-def check_host(URL_MAIN):
-    try:
-        import requests
-        url = URL_MAIN
-        session = requests.Session()  # so connections are recycled
-        resp = session.head(url, allow_redirects=True)
-        URL_MAIN = resp.url.split('/')[2]
-        URLMAIN = 'https://' + URL_MAIN
-        VSlog(URLMAIN)
-    except:
-        pass			
+
 
 def showHosters():
     import requests
@@ -93,7 +83,7 @@ def showHosters():
     sUrl = oInputParameterHandler.getValue('siteUrl')
     sMovieTitle = oInputParameterHandler.getValue('sMovieTitle')
     sThumb = oInputParameterHandler.getValue('sThumb')                    
-    URLMAIN = str(check_host(URL_MAIN))    
+      
     oParser = cParser()
  
     oRequestHandler = cRequestHandler(sUrl)
@@ -107,7 +97,7 @@ def showHosters():
 
 
     oRequestHandler = cRequestHandler(sUrl)
-    hdr = {'User-Agent' : 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Mobile Safari/537.36','Origin' : 'yallalive.org','Referer' : 'https://yallalive.org'}
+    hdr = {'User-Agent' : 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Mobile Safari/537.36','Origin' : 'yallalive.id','Referer' : 'https://yallalive.id/'}
     St=requests.Session()              
     sHtmlContent = St.get(sUrl,headers=hdr).content.decode('utf-8')        
 
@@ -116,7 +106,7 @@ def showHosters():
     aResult = oParser.parse(sHtmlContent, sPattern)
     if aResult[0] :
         for aEntry in aResult[1]:
-            sTitle = aEntry[1]
+            sTitle = sMovieTitle+' '+aEntry[1]
             url = aEntry[0]
             if '.m3u8' in url:           
                 url = url.split('=')[1] 
@@ -171,7 +161,7 @@ def showHosters():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
@@ -229,7 +219,7 @@ def showHosters():
             
 
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle+' '+sTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
