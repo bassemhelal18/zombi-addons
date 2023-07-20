@@ -427,14 +427,15 @@ def showSeries(sSearch = ''):
                 break
  
             sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("برنامج","").replace("فيلم","").replace("اون لاين","").replace("WEB-DL","").replace("BRRip","").replace("720p","").replace("HD-TC","").replace("HDRip","").replace("HD-CAM","").replace("DVDRip","").replace("BluRay","").replace("1080p","").replace("WEBRip","").replace("WEB-dl","").replace("مترجم ","").replace("مشاهدة وتحميل","").replace("اون لاين","").replace("مدبلج للعربية","مدبلج")
+
             siteUrl = aEntry[0]
-            ##VSlog("TV Show Link: " + siteUrl)
+            
             
             s1Thumb = aEntry[1]
             sThumb = re.sub(r'-\d*x\d*.','.', s1Thumb)
             sDesc = ''
             sTitle = sTitle.replace("الموسم العاشر","S10").replace("الموسم الحادي عشر","S11").replace("الموسم الثاني عشر","S12").replace("الموسم الثالث عشر","S13").replace("الموسم الرابع عشر","S14").replace("الموسم الخامس عشر","S15").replace("الموسم السادس عشر","S16").replace("الموسم السابع عشر","S17").replace("الموسم الثامن عشر","S18").replace("الموسم التاسع عشر","S19").replace("الموسم العشرون","S20").replace("الموسم الحادي و العشرون","S21").replace("الموسم الثاني و العشرون","S22").replace("الموسم الثالث و العشرون","S23").replace("الموسم الرابع والعشرون","S24").replace("الموسم الخامس و العشرون","S25").replace("الموسم السادس والعشرون","S26").replace("الموسم السابع والعشرون","S27").replace("الموسم الثامن والعشرون","S28").replace("الموسم التاسع والعشرون","S29").replace("الموسم الثلاثون","S30").replace("الموسم الحادي و الثلاثون","S31").replace("الموسم الثاني والثلاثون","S32").replace("الموسم الاول","S1").replace("الموسم الثاني","S2").replace("الموسم الثالث","S3").replace("الموسم الثالث","S3").replace("الموسم الرابع","S4").replace("الموسم الخامس","S5").replace("الموسم السادس","S6").replace("الموسم السابع","S7").replace("الموسم الثامن","S8").replace("الموسم التاسع","S9").replace("الموسم","S").replace("موسم","S").replace("S ","S").split('الحلقة')[0]
-
+            VSlog(sTitle)
             if sTitle not in itemList:
                 ##VSlog(sTitle + " NOT FOUND, WILL BE ADDED TO LIST")
                 itemList.append(sTitle)
@@ -447,16 +448,15 @@ def showSeries(sSearch = ''):
                 else:
                     oGui.addTV(SITE_IDENTIFIER, 'showSeasons', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
         progress_.VSclose(progress_)
-
- 
         
  
-    if not sSearch:
+    
         sNextPage = __checkForNextPage(sHtmlContent)
         if sNextPage != False:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', icons + '/next.png', oOutputParameterHandler)
+    if not sSearch:
         oGui.setEndOfDirectory()
  
 def showSeasons():
@@ -501,7 +501,7 @@ def showSeasons():
                     sTitle = sSeason+sEp
                     sThumb = sThumb
                     sDesc = ''
-
+                    VSlog(sTitle)
                     oOutputParameterHandler.addParameter('siteUrl', siteUrl)
                     oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
                     oOutputParameterHandler.addParameter('sThumb', sThumb)
@@ -535,7 +535,7 @@ def showSeasons():
                 sThumb = sThumb
                 sDesc = ''
                 sHost = ''
-
+                VSlog(sTitle)
                 oOutputParameterHandler.addParameter('siteUrl', siteUrl)
                 oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
                 oOutputParameterHandler.addParameter('sHost', sHost)
@@ -584,7 +584,7 @@ def showEps():
             sThumb = sThumb
             sDesc = ''
             sHost = ''
-
+            VSlog(sTitle)
             oOutputParameterHandler.addParameter('siteUrl', siteUrl)
             oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
             oOutputParameterHandler.addParameter('sHost', sHost)
@@ -600,15 +600,15 @@ def showEps():
 def __checkForNextPage(sHtmlContent):
 
     soup = BeautifulSoup(sHtmlContent, "html.parser")
-    sHtmlContent = str(soup.find("div",{"class":"pagination"}))
+    sHtmlContent = str(soup.find("ul",{"class":"page-numbers"}))
     
-    sPattern = '<li><a class=\"next.page-numbers\" href=\"(.+?)\">»<'
+    sPattern = '<a class=\"next.page-numbers\" href=\"(.+?)\">»<'
 	
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
     if aResult[0] is True:
         return URL_MAIN+aResult[1][0]
-
+    
     return False
 
 def showHosters():
@@ -623,7 +623,7 @@ def showHosters():
     sThumb = oInputParameterHandler.getValue('sThumb')
     
     oRequestHandler = cRequestHandler(sUrl)
-    sHtmlContent = oRequestHandler.request();
+    sHtmlContent = oRequestHandler.request()
     from resources.lib.util import Quote
 
     oParser = cParser()
@@ -632,7 +632,7 @@ def showHosters():
     aResult = oParser.parse(sHtmlContent,sPattern)
     if aResult[0] is True:
         murl = aResult[1][0] 
-        VSlog(murl)
+        
         oRequest = cRequestHandler(murl)
         oRequest.addHeaderEntry('User-Agent', 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1')
         oRequest.addHeaderEntry('Referer', Quote(URL_MAIN))
@@ -652,12 +652,12 @@ def showHosters():
                 oHtmlContent = oParser.abParse(str(sHtmlContent), sStart, sEnd)
                 sectionlist.append(oHtmlContent)
                 quality = sections[i].text.replace("مشاهدة ","")+'p'
-                VSlog(quality)
+                
 
                 sPattern = 'data-link=\"(.+?)\">.*?\s*?<i class'
 
                 aResult = [True, re.findall(sPattern, str(oHtmlContent))]
-                VSlog(aResult)
+                
                 if aResult[0] is True:
                    for aEntry in aResult[1]:
                 
@@ -679,10 +679,10 @@ def showHosters():
                           cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)
                     
             else:
-                VSlog(sections[i])
+                
 
                 sStart = str(sections[i])
-                VSlog("Last start: " + sStart)
+                
                 cHtmlContent = oParser.abParse(str(sHtmlContent), sStart)
 
                 sPattern = 'data-link=\"(.+?)\">.*?\s*?<i class'
@@ -693,7 +693,7 @@ def showHosters():
                    for aEntry in aResult[1]:
                 
                        url = aEntry
-                       VSlog("Hoster Link: " + url)
+                      
                        sThumb = icons + '/resolution/' + quality + '.png'
                        if url.startswith('//'):
                           url = 'http:' + url
