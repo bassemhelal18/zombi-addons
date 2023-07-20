@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # zombi https://github.com/zombiB/zombi-addons/
 
 import re
@@ -341,46 +341,13 @@ def showMovies(sSearch = ''):
 
         progress_.VSclose(progress_)
         
-  # # ([^<]+) .+? (.+?)
-
-    # sPattern = '<li><a href="([^<]+)">([^<]+)</a></li>'
-
-    # oParser = cParser()
-    # aResult = oParser.parse(sHtmlContent, sPattern)
-	
-	
-    # if aResult[0]:
-        # total = len(aResult[1])
-        # progress_ = progress().VScreate(SITE_NAME)
-        # oOutputParameterHandler = cOutputParameterHandler() 
-        # for aEntry in aResult[1]:
-            # progress_.VSupdate(progress_, total)
-            # if progress_.iscanceled():
-                # break
- 
-            # sTitle = aEntry[1]           
-            # sTitle =  "PAGE " + sTitle
-            # sTitle =   '[COLOR red]'+sTitle+'[/COLOR]'
-            # siteUrl = aEntry[0]
-            # sThumb = ''
-
-
-            # oOutputParameterHandler.addParameter('siteUrl',siteUrl)
-            # oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
-            # oOutputParameterHandler.addParameter('sThumb', sThumb)
-			
-            # oGui.addDir(SITE_IDENTIFIER, 'showMovies', sTitle, '', oOutputParameterHandler)
-
-        # progress_.VSclose(progress_)
- 
-        
- 
-    if not sSearch:
+    
         sNextPage = __checkForNextPage(sHtmlContent)
         if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showMovies', '[COLOR teal]Next >>>[/COLOR]', icons + '/next.png', oOutputParameterHandler)
+    if not sSearch:    
         oGui.setEndOfDirectory()
 
 def showSeries(sSearch = ''):
@@ -401,7 +368,7 @@ def showSeries(sSearch = ''):
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
-    item = {}
+    
     itemList = []
 	
     if aResult[0]:
@@ -439,44 +406,13 @@ def showSeries(sSearch = ''):
         
         progress_.VSclose(progress_)
         
-  # ([^<]+) .+? (.+?)
-
-    # sPattern = '\"next\" href=\"(.+?)\">'
-
-    # oParser = cParser()
-    # aResult = oParser.parse(sHtmlContent, sPattern)
-	
-	
-    # if aResult[0]:
-        # total = len(aResult[1])
-        # progress_ = progress().VScreate(SITE_NAME)
-        # oOutputParameterHandler = cOutputParameterHandler() 
-        # for aEntry in aResult[1]:
-            # progress_.VSupdate(progress_, total)
-            # if progress_.iscanceled():
-                # break
- 
-            # sTitle = "Next" #aEntry[1]           
-            # #sTitle =  "PAGE " + sTitle
-            # #sTitle =   '[COLOR red]'+sTitle+'[/COLOR]'
-            # siteUrl = aEntry
-            # sThumb = icons + '/Next.png'
-
-
-            # oOutputParameterHandler.addParameter('siteUrl',siteUrl)
-            # oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
-            # oOutputParameterHandler.addParameter('sThumb', sThumb)
-			
-            # oGui.addDir(SITE_IDENTIFIER, 'showSeries', sTitle, sThumb, oOutputParameterHandler)
-
-        # progress_.VSclose(progress_)
-			
-    if not sSearch:
+    
         sNextPage = __checkForNextPage(sHtmlContent)
         if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
             oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', icons + '/next.png', oOutputParameterHandler)
+    if not sSearch:    
         oGui.setEndOfDirectory()  
 			
 def showSeasons():
@@ -621,7 +557,7 @@ def showHosters():
     
     if (aResult[0]):
         URL_MAIN = aResult[1][0]
-        VSlog(URL_MAIN)
+        
     
     #Recuperation infos
     sNote = ''
@@ -727,14 +663,3 @@ def showHosters():
 				
                 
     oGui.setEndOfDirectory()  
-# (.+?) .+? 
-# def __checkForNextPage(sHtmlContent):
-    # sPattern = '<a class="page-link current".+?</a><a class="page-link" href="(.+?)">'
-	
-    # oParser = cParser()
-    # aResult = oParser.parse(sHtmlContent, sPattern)
- 
-    # if aResult[0]:
-        # return URL_MAIN+aResult[1][0]
-
-    # return False
