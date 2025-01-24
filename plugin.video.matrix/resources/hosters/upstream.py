@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+﻿#-*- coding: utf-8 -*-
 #Vstream https://github.com/Kodi-vStream/venom-xbmc-addons
 import re
 
@@ -30,6 +30,11 @@ class cHoster(iHoster):
         oRequest = cRequestHandler(self._url)
         oRequest.addHeaderEntry("User-Agent",UA)
         sHtmlContent = oRequest.request()
+        from resources.lib.comaddon import dialog
+        oDialog = dialog()
+        if 'File Not Found' in sHtmlContent:
+            oDialog.VSerror("لم يعد الملف متاحًا حيث انتهت صلاحيته أو تم حذفه.")
+            return
 
         sPattern = "(\s*eval\s*\(\s*function(?:.|\s)+?)<\/script>"
         aResult_1 = re.findall(sPattern, sHtmlContent)
@@ -42,7 +47,7 @@ class cHoster(iHoster):
         oParser = cParser()
         aResult = oParser.parse(sHtmlContent, sPattern)
 
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = aResult[1][0]
         elif len(aResult_1) > 1 :
             sUnpacked = cPacker().unpack(aResult_1[1])
@@ -50,7 +55,7 @@ class cHoster(iHoster):
             sPattern = 'sources: *\[\{file:"([^"]+)"'
             oParser = cParser()
             aResult = oParser.parse(sHtmlContent, sPattern)
-            if aResult[0] is True:
+            if aResult[0]:
                 api_call = aResult[1][0]
 
         if api_call:

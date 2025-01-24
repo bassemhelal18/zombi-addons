@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # https://github.com/zombiB/zombi-addons
-import xbmc
+#import xbmc
 
 # from resources.lib.statistic import cStatistic
 from resources.lib.home import cHome
@@ -26,6 +26,9 @@ from resources.lib.search import cSearch
 # Mettre True pour activer le debug
 DEBUG = False
 
+ADDON = addon()
+icons = ADDON.getSetting('defaultIcons')
+    
 if DEBUG:
 
     import sys  # pydevd module need to be copied in Kodi\system\python\Lib\pysrc
@@ -102,7 +105,10 @@ class main:
 
             if isFav(sSiteName, sFunction):
                 return
-
+            
+            if isWatched(sSiteName, sFunction):
+                return
+					
             if isViewing(sSiteName, sFunction):
                 return
 
@@ -230,6 +236,13 @@ def isFav(sSiteName, sFunction):
         return True
     return False
 
+def isWatched(sSiteName, sFunction):
+    if sSiteName == 'cWatched':
+        plugins = __import__('resources.lib.watched', fromlist=['cWatched']).cWatched()
+        function = getattr(plugins, sFunction)
+        function()
+        return True
+    return False
 
 def isViewing(sSiteName, sFunction):
     if sSiteName == 'cViewing':
@@ -266,6 +279,7 @@ def isHome(sSiteName, sFunction):
     return False
 
 
+
 def isTrakt(sSiteName, sFunction):
     if sSiteName == 'cTrakt':
         plugins = __import__('resources.lib.trakt', fromlist=['cTrakt']).cTrakt()
@@ -273,7 +287,6 @@ def isTrakt(sSiteName, sFunction):
         function()
         return True
     return False
-
 
 def isSearch(sSiteName, sFunction):
     if sSiteName == 'globalSearch':

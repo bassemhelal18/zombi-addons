@@ -15,6 +15,8 @@ class cHoster(iHoster):
 
     def _getMediaLinkForGuest(self):
         VSlog(self._url)
+        if 'embed-' in self._url:
+            self._url = self._url.replace('embed-','')
  
         api_call = ''
         
@@ -24,17 +26,17 @@ class cHoster(iHoster):
 		
         sPattern = 'sources: [{file:"(.+?)"}],'
         aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = aResult[1][0]
 		
         sPattern = 'file:"(.+?)"}'
         aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = aResult[1][0]
 
         sPattern = ',{file:"(.+?)",label'
         aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = aResult[1][0]
 
 

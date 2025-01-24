@@ -5,8 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.hosters.hoster import iHoster
 from resources.lib.parser import cParser
 from resources.lib.packer import cPacker
-from resources.lib.comaddon import dialog
-from resources.lib.comaddon import VSlog
+from resources.lib.comaddon import dialog, VSlog
 
 UA = 'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1'
 
@@ -26,13 +25,13 @@ class cHoster(iHoster):
         #test pour voir si code
         sPattern = '(eval\(function\(p,a,c,k,e(?:.|\s)+?\))<\/script>'
         aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             sHtmlContent = cPacker().unpack(aResult[1][0])
         sPattern = ',{file:"(.+?)",label:"(.+?)"}'
         aResult = oParser.parse(sHtmlContent, sPattern)
         api_call = False
 
-        if aResult[0] is True:
+        if aResult[0]:
             
             #initialisation des tableaux
             url=[]

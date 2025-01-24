@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+﻿#-*- coding: utf-8 -*-
 #Vstream https://github.com/Kodi-vStream/venom-xbmc-addons
 #https://sama-share.com/embed-shsaa6s49l55-750x455.html
 from resources.lib.handler.requestHandler import cRequestHandler
@@ -20,7 +20,6 @@ class cHoster(iHoster):
         #lien embed obligatoire
         if not 'embed-' in self._url:
             self._url = self._url.rsplit('/', 1)[0] + '/embed-' + self._url.rsplit('/', 1)[1]
-            self._url = self._url+'-750x455.html'
 
     def _getMediaLinkForGuest(self):
         VSlog(self._url)
@@ -28,6 +27,11 @@ class cHoster(iHoster):
 
         oRequest = cRequestHandler(self._url)
         sHtmlContent = oRequest.request()
+        from resources.lib.comaddon import dialog
+        oDialog = dialog()
+        if 'File was deleted' in sHtmlContent:
+            oDialog.VSerror("لم يعد الملف متاحًا حيث انتهت صلاحيته أو تم حذفه.")
+            return
 
         oParser = cParser()
         sPattern =  '(\s*eval\s*\(\s*function(?:.|\s)+?)<\/script>'

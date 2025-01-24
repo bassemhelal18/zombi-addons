@@ -153,7 +153,7 @@ class empty:
 
     def getProgress(self):
         return 100  # simuler la fin de la progression
-# Basé sur UrlResolver
+# Basé sur ResolveURL
 class CountdownDialog(object):
     __INTERVALS = 5
 
@@ -449,9 +449,10 @@ class siteManager:
 
     SITES = 'sites'
     ACTIVE = 'active'
+    CLOUDFLARE = 'cloudflare'
     LABEL = 'label'
     URL_MAIN = 'url'
-
+    URL_MAIN2 = 'url2'
     def __init__(self):
         
         # Propriétés par défaut
@@ -473,18 +474,25 @@ class siteManager:
 
         # Chargement des properties
         try:
-            self.data = json.load(open(self.propertiesPath))
+
+            with open(self.propertiesPath, 'r') as f:
+                self.data = json.load(f)
         except IOError:
             # le fichier n'existe pas, on le crée à partir des settings par défaut
             xbmcvfs.copy(self.defaultPath, path)
-            self.data = json.load(open(self.propertiesPath))
+
+            with open(self.propertiesPath, 'r') as f:
+                self.data = json.load(f)
             
 
     # sites désactivé par la team
     def isEnable(self, sourceName):
         return self.getDefaultProperty(sourceName, self.ACTIVE) == 'True'
 
-    
+
+    # site identifié par la team comme étant protégé par Cloudflare, false par défaut si non renseigné
+    def isCloudFlare(self, sourceName):
+        return self.getDefaultProperty(sourceName, self.CLOUDFLARE) == 'True'
     # sites désactivé par l'utilisateur
     def isActive(self, sourceName):
         return self.getProperty(sourceName, self.ACTIVE) == 'True'
@@ -494,7 +502,9 @@ class siteManager:
 
     def getUrlMain(self, sourceName):
         return str(self.getDefaultProperty(sourceName, self.URL_MAIN))
-    
+
+    def getUrlMain2(self, sourceName):
+        return str(self.getDefaultProperty(sourceName, self.URL_MAIN2))
     def disableAll(self):
         for sourceName in self.data[self.SITES]:
             self.setActive(sourceName, False)
@@ -561,7 +571,8 @@ class siteManager:
 
         # Chargement des properties par défaut
         if not self.defaultData:
-            self.defaultData = json.load(open(self.defaultPath))
+            with open(self.defaultPath, 'r') as f:
+                self.defaultData = json.load(f)
 
         # Retrouver la prop par défaut
         sourceData = self.defaultData[self.SITES].get(sourceName) if self.defaultData and self.SITES in self.defaultData else None

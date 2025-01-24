@@ -8,13 +8,14 @@ c'est le changelog de la beta !        <setting label="30036" type="action" acti
  -->
         <setting label="30030" type="lsep"/>
         <setting type="sep"/>
-        <setting id="playerPlay" type="enum" values="XbmcPlayer|XbmcPlugin (recommandé)" label="30029" default="1"/>
+        <setting id="playerPlay" type="enum" values="XbmcPlayer|XbmcPlugin (recommanded)" label="30029" default="1"/>
         <setting id="playerType" type="enum" values="Auto|MPlayer|DVDPlayer" label="30001" default="2" enable="eq(-1,0)"/>
         <setting id="upnext" type="bool" label="30506" default="true"/>
         <setting id="srt-view" type="bool" label="30002" default="false"/>
 
         <setting label="30481" type="lsep"/>
         <setting type="sep"/>
+        <setting id="defaultIcons" type="enum" label="3001099" lvalues="3001091|3001092" default="1" />
         <setting id="deco_color" type="select" label="30010" values="aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|none|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|transparent|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen" default="lightcoral"/>
         <setting id="Block_Noti_sound" type="bool" label="30411" default="false"/>
         <setting id="spinner_small" type="bool" label="30480" default="true"/>
@@ -26,10 +27,12 @@ c'est le changelog de la beta !        <setting label="30036" type="action" acti
         <setting label="30005" type="lsep"/>
         <setting id="meta-view" type="bool" label="30006" default="true"/>
         <setting id="api_tmdb" type="text" label="API TMDB"  default="b7cf9324cbeb6f4fb811144aa9397093"/>
+        <setting id="tmdb_lang" type="select" label="30070" values="ar|de|en|fr|it|pt" default="en"/>
         <setting id="poster_tmdb" type="select" label="30007" values="w92|w154|w185|w342|w500|w780|original" default="w342"/>
         <setting id="backdrop_tmdb" type="select" label="30008" values="w300|w780|w1280|original" default="w1280"/>
         <setting id="information-view" type="bool" label="31102" default="false"/>
-        <setting id="display_season_title" type="bool" label="31204" default="true"/>        
+        <setting id="display_season_title" type="bool" label="31204" default="true"/>
+        <setting id="display_info_file" type="bool" label="31207" default="false"/>  
 
         <setting label="30032" type="lsep"/>
         <setting type="sep"/>
@@ -53,11 +56,13 @@ c'est le changelog de la beta !        <setting label="30036" type="action" acti
         <setting label="30420" type="action"  action="RunScript(plugin.video.matrix, search, ?site=globalRun&amp;function=search)"/>
         <setting label="31104" type="action"  action="RunScript(plugin.video.matrix, enableSources, ?site=globalRun&amp;function=enableSources)"/>
         <setting label="31105" type="action"  action="RunScript(plugin.video.matrix, disableSources, ?site=globalRun&amp;function=disableSources)"/>
+        <setting id="pluginsupdateduration" type="number" label="30422152" default="4"/>
         <setting type="sep"/>
 
         <setting id="history-view" type="bool" label="30016" default="true"/>
         <setting type="sep"/>
-        <setting label="31203" type="ipaddress" id="ipaddress" default="127.0.0.1"/>
+        <setting id="Public_Flaresolverr" type="bool" label="Use Public Flaresolverr" default="false"/>
+        <setting label="31203" type="ipaddress" id="ipaddress" default="127.0.0.1" enable="eq(-1,true)"/>
 
         <!--parametres invisibles -->
         <setting id="ZT" type="text" label="" default="" visible="false"/>
@@ -127,6 +132,11 @@ c'est le changelog de la beta !        <setting label="30036" type="action" acti
         <setting id="bs_login" type="text" label="30401" default=""/>
         <setting id="bs_pass" type="text" label="30402" default="" option="hidden"/> -->
 
+        <setting label="Awaan Login" type="lsep"/>
+        <setting type="sep"/>
+        <setting id="hoster_awaan_username" type="text" label="30401" default="lMatrixUserl@gmail.com"/>
+        <setting id="hoster_awaan_password" type="text" label="30402" default="Matrix123" option="hidden"/>
+		
         <setting label="Debrid Link" type="lsep"/>
         <setting type="sep"/>
         <setting id="hoster_debridlink_premium" type="bool" label="30403" default="false"/>
@@ -173,15 +183,25 @@ c'est le changelog de la beta !        <setting label="30036" type="action" acti
 
         <setting type="sep"/>
         <setting id="UserResolveurl" type="bool" label="30066" default="false"/>
-        <setting label="30067" type="action" option="close" action="RunScript(plugin.video.matrix, urlresolver, ?site=globalRun&amp;function=urlresolver)"/>
+        <setting label="30067" type="action" option="close" action="RunScript(plugin.video.matrix, resolveurl, ?site=globalRun&amp;function=resolveurl)"/>
     </category>
 
+    <!-- Requests Cache -->
+    <category label="301271">
+
+        <setting id="RequestCache" type="bool" label="3042215" default="true"/>
+        <setting id="RequestCacheDuration" type="number" label="30422151" default="6"/>
+        <setting label="30057" type="action" action="RunScript(plugin.video.matrix, RequestCache, ?site=globalRun&amp;function=RequestCache)"/>
+        
+    </category>
+    
     <!-- Outils -->
     <category label="30127">
-        <setting label="30033" type="lsep"/>
-
-        <setting type="sep"/>
+    
         <setting id="debug" type="bool" label="30422" default="true"/>
+        
+        <setting label="30033" type="lsep"/>
+        <setting label="loguploader" type="action" option="close" action="RunScript(script.kodi.loguploader, loguploader)"/>
 
         <setting subsetting="true" label="30055" type="lsep"/>
         <setting label="Import/Export" type="action" action="RunScript(plugin.video.matrix, sauv, ?site=globalRun&amp;function=sauv)"/>
@@ -203,5 +223,8 @@ c'est le changelog de la beta !        <setting label="30036" type="action" acti
 
         <setting type="sep"/>
         <setting label="30064" type="action" action="ReloadSkin()"/>
+        
+        <setting id="testingfeatures" type="bool" label="304221" default="false"/>
     </category>
+    
 </settings>

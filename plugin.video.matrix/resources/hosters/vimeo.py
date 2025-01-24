@@ -3,8 +3,7 @@
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.hosters.hoster import iHoster
-from resources.lib.comaddon import dialog
-from resources.lib.comaddon import VSlog
+from resources.lib.comaddon import dialog, VSlog
 
 class cHoster(iHoster):
 
@@ -15,7 +14,7 @@ class cHoster(iHoster):
         sPattern = 'vimeo\.com\/(?:event\/)?([0-9]+)'
         oParser = cParser()
         aResult = oParser.parse(sUrl, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             return aResult[1][0]
 
         return ''
@@ -51,9 +50,10 @@ class cHoster(iHoster):
         sPattern =  '"origin":"(.+?)","url":"(.+?)",'
         oParser = cParser()
         aResult = oParser.parse(sHtmlContent, sPattern)
+        VSlog(sHtmlContent)
         VSlog(aResult)
 
-        if aResult[0] is True:
+        if aResult[0]:
             #initialisation des tableaux
             url=[]
             qua=[]

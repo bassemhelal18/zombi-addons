@@ -9,7 +9,10 @@ from resources.lib.handler.inputParameterHandler import cInputParameterHandler
 from resources.lib.handler.outputParameterHandler import cOutputParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.comaddon import progress, VSlog, isMatrix, siteManager
+from resources.lib.comaddon import VSlog, isMatrix, siteManager, addon
+
+ADDON = addon()
+icons = ADDON.getSetting('defaultIcons')
  
 SITE_IDENTIFIER = 'ahdaf'
 SITE_NAME = 'Ahdaf'
@@ -23,7 +26,7 @@ def load():
     
     oOutputParameterHandler = cOutputParameterHandler()
     oOutputParameterHandler.addParameter('siteUrl', SPORT_FOOT[0])
-    oGui.addDir(SITE_IDENTIFIER, 'showMovies', 'أهداف و ملخصات', 'sport.png', oOutputParameterHandler)
+    oGui.addDir(SITE_IDENTIFIER, 'showMovies', 'أهداف و ملخصات', icons + '/Sport.png', oOutputParameterHandler)
     
     oGui.setEndOfDirectory()
 
@@ -52,14 +55,9 @@ def showMovies(sSearch = ''):
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
 	
-    if aResult[0] is True:
-        total = len(aResult[1])
-        progress_ = progress().VScreate(SITE_NAME)
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler() 
         for aEntry in aResult[1]:
-            progress_.VSupdate(progress_, total)
-            if progress_.iscanceled():
-                break
  
             sTitle = aEntry[1]
             sThumb = ''
@@ -72,7 +70,6 @@ def showMovies(sSearch = ''):
 
             oGui.addMisc(SITE_IDENTIFIER, 'showLive', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
         
-        progress_.VSclose(progress_)
  
  
     oGui.setEndOfDirectory()
@@ -103,14 +100,9 @@ def showLive():
     aResult = oParser.parse(sHtmlContent, sPattern)
     
    
-    if aResult[0] is True:
-        total = len(aResult[1])
-        progress_ = progress().VScreate(SITE_NAME)
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler() 
         for aEntry in aResult[1]:
-            progress_.VSupdate(progress_, total)
-            if progress_.iscanceled():
-                break
  
             sTitle = aEntry[1]
             sThumb = '' 
@@ -121,7 +113,6 @@ def showLive():
             oOutputParameterHandler.addParameter('sMovieTitle', sMovieTitle)
             oGui.addMisc(SITE_IDENTIFIER, 'showHosters', sTitle, '', sThumb, sDesc, oOutputParameterHandler)  
         
-        progress_.VSclose(progress_)      
            
        
     oGui.setEndOfDirectory()
@@ -160,8 +151,8 @@ def showHosters():
             sHosterUrl = aEntry[0]
             if sHosterUrl.startswith('//'):
                 sHosterUrl = 'http:' + sHosterUrl
-                           
-            if 'goo.gl' in sHosterUrl or 'bit.ly' in sHosterUrl:
+                          
+            if 'goo.gl' in sHosterUrl or 'shorturl' in sHosterUrl or 'bit.ly' in sHosterUrl:
                 try:
                     import requests
                     url = sHosterUrl
@@ -172,7 +163,7 @@ def showHosters():
                     pass
             
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sMovieTitle)
                 oHoster.setFileName(sMovieTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, '')

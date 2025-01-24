@@ -31,7 +31,6 @@ except:
 SITE_IDENTIFIER = 'runscript'
 SITE_NAME = 'runscript'
 
-
 class cClear:
 
     DIALOG = dialog()
@@ -171,8 +170,8 @@ class cClear:
             return
 
         elif (env == 'clean'):
-            liste = ['Historiques des recherches', 'Marque-Pages', 'En cours de lecture',
-                     'Niveau de lecture', 'Marqués vues', 'Téléchargements']
+            liste = ['Search history', 'bookmarks', 'Now Playing',
+                     'Readings', 'Tagged views', 'Downloads']
             ret = self.DIALOG.VSselect(liste, self.ADDON.VSlang(30110))
             cached_DB = "special://home/userdata/addon_data/plugin.video.matrix/matrix.db"
             # important seul xbmcvfs peux lire le special
@@ -231,6 +230,7 @@ class cClear:
                     self.DIALOG.VSerror(self.ADDON.VSlang(30096))
             return
 
+            
         # activer toutes les sources
         elif (env == 'enableSources'):
             if self.DIALOG.VSyesno(self.ADDON.VSlang(30456)):
@@ -390,12 +390,26 @@ class cClear:
                     self.DIALOG.VSerror(self.ADDON.VSlang(30100))
 
                 return
+        
+        elif (env == 'RequestCache'):
+            if self.DIALOG.VSyesno(self.ADDON.VSlang(300981)):
+                
+                temp_dir = xbmcvfs.translatePath("special://home/userdata/addon_data/")
+                DBPath = os.path.join(temp_dir, ADDON.getAddonInfo('id') , 'Requests cache',)
+                DB = "/".join([DBPath, 'RequestsCache.db']) 
+                try:
+                    xbmcvfs.delete(DB)
+                    #xbmcvfs.rmdir(DBPath, True)
+                    text = 'Matrix Request Cache was deleted'
+                    self.DIALOG.VSok(text)
+                except:
+                    self.DIALOG.VSerror(self.ADDON.VSlang(301001))
 
         else:
             return
 
         return
-
+    
     # def ClearDir(self, dir, clearNested=False):
     #     try:
     #         dir = dir.decode("utf8")

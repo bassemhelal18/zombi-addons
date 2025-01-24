@@ -20,20 +20,21 @@ class cHoster(iHoster):
         oRequest = cRequestHandler(self._url)
         sHtmlContent = oRequest.request()
         oParser = cParser()
+        VSlog(sHtmlContent)
         
 
         sPattern = 'file:"([^<]+)",label'
         aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = aResult[1][0] +'|User-Agent=' + UA + '&Referer=' + self._url
        
         sPattern = "(eval\(function\(p,a,c,k,e(?:.|\s)+?\))<\/script>"
         aResult = oParser.parse(sHtmlContent,sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             sHtmlContent = cPacker().unpack(aResult[1][0])
             sPattern = 'file:"(.+?)",label:".+?"}'
             aResult = oParser.parse(sHtmlContent,sPattern)
-            if aResult[0] is True:
+            if aResult[0]:
                 api_call = aResult[1][0] 
         #VSlog(api_call)
 

@@ -18,8 +18,7 @@ import ssl
 
 from resources.lib.parser import cParser
 from resources.hosters.hoster import iHoster
-from resources.lib.comaddon import dialog
-from resources.lib.comaddon import VSlog
+from resources.lib.comaddon import dialog, VSlog
 
 UA = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0"
 
@@ -32,7 +31,7 @@ class cHoster(iHoster):
         sPattern = 'https*:\/\/vidup.+?\/(?:embed-)?(?:embed/)?([0-9a-zA-Z]+)'
         oParser = cParser()
         aResult = oParser.parse(sUrl, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             return aResult[1][0]
 
         return ''

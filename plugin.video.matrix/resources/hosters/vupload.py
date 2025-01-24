@@ -3,9 +3,8 @@
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.hosters.hoster import iHoster
-from resources.lib.comaddon import dialog
+from resources.lib.comaddon import dialog, VSlog
 from resources.lib.packer import cPacker
-from resources.lib.comaddon import VSlog
 UA = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0'
 
 
@@ -31,14 +30,14 @@ class cHoster(iHoster):
         sPattern = 'src: "(.+?)",'
 
         aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = aResult[1][0]
 		
         else:		
             sPattern = '(eval\(function\(p,a,c,k,e(?:.|\s)+?\))<\/script>'
             aResult = oParser.parse(sHtmlContent, sPattern)
 
-            if aResult[0] is True:
+            if aResult[0]:
                 sHtmlContent2 = cPacker().unpack(aResult[1][0])
 
                 sPattern = '{src:"([^"]+)",type:"video\/mp4",res:([^:,<>]+)'

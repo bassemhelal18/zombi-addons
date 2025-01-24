@@ -1,5 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 # zombi https://github.com/zombiB/zombi-addons/
+
 import re
 from resources.lib.gui.hoster import cHosterGui
 from resources.lib.gui.gui import cGui
@@ -7,7 +8,11 @@ from resources.lib.handler.inputParameterHandler import cInputParameterHandler
 from resources.lib.handler.outputParameterHandler import cOutputParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.comaddon import progress, VSlog, siteManager	
+from resources.lib.comaddon import VSlog, siteManager, addon
+from resources.lib.Styling import getThumb, getGenreIcon
+
+ADDON = addon()
+icons = ADDON.getSetting('defaultIcons')
 
 SITE_IDENTIFIER = 'aflamfree'
 SITE_NAME = 'Aflamfree'
@@ -22,31 +27,60 @@ URL_SEARCH_MOVIES = (URL_MAIN + '/?s=', 'showMoviesearch')
 FUNCTION_SEARCH = 'showMoviesearch'
 
 def load():
-	oGui = cGui()
+    oGui = cGui()
 
-	oOutputParameterHandler = cOutputParameterHandler()
-	oOutputParameterHandler.addParameter('siteUrl', URL_SEARCH[0])
-	oGui.addDir(SITE_IDENTIFIER, 'showSearch', 'Search Movies', 'search.png', oOutputParameterHandler)
+    oOutputParameterHandler = cOutputParameterHandler()
+    oOutputParameterHandler.addParameter('siteUrl', URL_SEARCH[0])
+    oGui.addDir(SITE_IDENTIFIER, 'showSearch', 'Search Movies', icons + '/Search.png', oOutputParameterHandler)
+
+    # oOutputParameterHandler.addParameter('siteUrl', MOVIE_PACK[0])
+    # oGui.addDir(SITE_IDENTIFIER, 'showPack', 'أقسام الموقع', icons + '/All.png', oOutputParameterHandler)
 	
-	oOutputParameterHandler.addParameter('siteUrl', MOVIE_PACK[0])
-	oGui.addDir(SITE_IDENTIFIER, 'showPack', 'أقسام الموقع', 'icon.png', oOutputParameterHandler)
+    sUrl = URL_MAIN
+
+    oRequestHandler = cRequestHandler(sUrl)
+    sHtmlContent = oRequestHandler.request()
+
+    sPattern = 'cat-item cat-item-.*\"><a href=\"(.+?)\".?>(.+?)</a>'
+    matches = re.findall(sPattern,sHtmlContent)
+    aResult = [True,matches]
+
+
+    if aResult[0]:
+        oOutputParameterHandler = cOutputParameterHandler()
+        for aEntry in aResult[1]:
+            sTitle = aEntry[1].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","") 
+
+            sThumb = getThumb(sTitle)
+            siteUrl = aEntry[0]+'/page/1'
+            #VSlog(siteUrl)
+            sDesc = ''
+            
+            oOutputParameterHandler = cOutputParameterHandler()
+            oOutputParameterHandler.addParameter('siteUrl',siteUrl)
+            oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
+            oOutputParameterHandler.addParameter('sThumb', sThumb)
+
+            #oGui.addMisc(SITE_IDENTIFIER, 'showLive', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
+
+            oGui.addDir(SITE_IDENTIFIER, 'showLive', sTitle, sThumb, oOutputParameterHandler)
 	
-	oGui.setEndOfDirectory()
+    oGui.setEndOfDirectory()
 
 def showYears():
     oGui = cGui()
     oOutputParameterHandler = cOutputParameterHandler()
-    for i in reversed(range(1921, 2022)):
+    for i in reversed(range(1921, 2024)):
         sYear = str(i)
         oOutputParameterHandler.addParameter('siteUrl', URL_MAIN + '/release-year/' + sYear)  # / inutile
-        oGui.addDir(SITE_IDENTIFIER, 'showLive', sYear, 'annees.png', oOutputParameterHandler)
+        oGui.addDir(SITE_IDENTIFIER, 'showLive', sYear, icons + '/Calendar.png', oOutputParameterHandler)
     oGui.setEndOfDirectory()
 	
 def showSearch():
 	oGui = cGui()
 	 
 	sSearchText = oGui.showKeyBoard()
-	if sSearchText is not False:
+	if sSearchText:
 		sUrl = URL_MAIN + '/?s='+sSearchText
 		showMoviesearch(sUrl)
 		oGui.setEndOfDirectory()
@@ -69,18 +103,13 @@ def showMoviesearch(sSearch = ''):
 
     aResult = oParser.parse(sHtmlContent, sPattern)
 		
-    if aResult[0] is True:
-        total = len(aResult[1])
-        progress_ = progress().VScreate(SITE_NAME)
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]:
-            progress_.VSupdate(progress_, total)
-            if progress_.iscanceled():
-                break
- 
             sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","") 
             siteUrl = aEntry[0]
-            sThumb = aEntry[1] 
+            s1Thumb = aEntry[1] 
+            sThumb = re.sub(r'-\d*x\d*.','.', s1Thumb)
             sYear = ''
             m = re.search('([0-9]{4})', sTitle)
             if m:
@@ -96,14 +125,12 @@ def showMoviesearch(sSearch = ''):
             oOutputParameterHandler.addParameter('sYear', sYear)
 
             oGui.addMovie(SITE_IDENTIFIER, 'showLive2', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
-			
-        progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
-            oGui.addDir(SITE_IDENTIFIER, 'showMoviesearch', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
+            oGui.addDir(SITE_IDENTIFIER, 'showMoviesearch', '[COLOR teal]Next >>>[/COLOR]', icons + '/Next.png', oOutputParameterHandler)
  
     if not sSearch:
         oGui.setEndOfDirectory()
@@ -119,37 +146,38 @@ def showPack(sSearch = ''):
     oRequestHandler = cRequestHandler(sUrl)
     sHtmlContent = oRequestHandler.request()
 #([^<]+) .+? 
-
-    sPattern = 'style="font-size: large;"><a href="([^<]+)">([^<]+)</a><br />'
-
+    #VSlog(sUrl)
+    sPattern = 'style=\"font-size: large;\"><a href=\"([^<]+)\">(.+?)</a>'
 
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
 	
-    if aResult[0] is True:
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]:
             sTitle = aEntry[1].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","") 
-            sThumb = aEntry[1]
+            
+            sThumb = getThumb(sTitle)
+                        
             siteUrl = aEntry[0]+'/page/1'
+            #VSlog(siteUrl)
             sDesc = ''
-			
-
+            
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl',siteUrl)
             oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
             oOutputParameterHandler.addParameter('sThumb', sThumb)
 
-            oGui.addMisc(SITE_IDENTIFIER, 'showLive', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
- 
+            oGui.addDir(SITE_IDENTIFIER, 'showLive', sTitle, sThumb, oOutputParameterHandler)
+    
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+    if not sSearch:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
-            oGui.addDir(SITE_IDENTIFIER, 'showPack', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
+            oGui.addDir(SITE_IDENTIFIER, 'showPack', '[COLOR teal]Next >>>[/COLOR]', icons + '/Next.png', oOutputParameterHandler)
  
-    if not sSearch:
         oGui.setEndOfDirectory()
  
       # (.+?) ([^<]+) .+?
@@ -157,7 +185,7 @@ def __checkForNextPage(sHtmlContent):
     sPattern = "href='([^<]+)'>.+?Next"
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
-    if aResult[0] is True:
+    if aResult[0]:
         aResult = aResult[1][0]
         return aResult
 
@@ -180,12 +208,13 @@ def showLive():
     aResult = oParser.parse(sHtmlContent, sPattern)
     
    
-    if aResult[0] is True:
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]: 
             sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","") 
             siteUrl = aEntry[0]
-            sThumb = aEntry[1]
+            s1Thumb = aEntry[1]
+            sThumb = re.sub(r'-\d*x\d*.','.', s1Thumb)
             sYear = ''
             m = re.search('([1-2][0-9]{3})', sTitle)
             if m:
@@ -205,12 +234,13 @@ def showLive():
     aResult = oParser.parse(sHtmlContent, sPattern)
     
    
-    if aResult[0] is True:
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]:
             sTitle = aEntry[2].replace("مشاهدة","").replace("مسلسل","").replace("انمي","").replace("مترجمة","").replace("مترجم","").replace("فيلم","").replace("والأخيرة","").replace("مدبلج للعربية","مدبلج").replace("والاخيرة","").replace("كاملة","").replace("حلقات كاملة","").replace("اونلاين","").replace("مباشرة","").replace("انتاج ","").replace("جودة عالية","").replace("كامل","").replace("HD","").replace("السلسلة الوثائقية","").replace("الفيلم الوثائقي","").replace("اون لاين","") 
             siteUrl = aEntry[0]
-            sThumb = aEntry[1] 
+            s1Thumb = aEntry[1] 
+            sThumb = re.sub(r'-\d*x\d*.','.', s1Thumb)
             sDesc = "" 
  
             oOutputParameterHandler.addParameter('siteUrl', siteUrl)
@@ -230,7 +260,7 @@ def showLive():
     oOutputParameterHandler = cOutputParameterHandler()
     oOutputParameterHandler.addParameter('siteUrl',siteUrl)
     oOutputParameterHandler.addParameter('sMovieTitle', sTitle)
-    oGui.addDir(SITE_IDENTIFIER, 'showLive', sTitle,'next.png', oOutputParameterHandler)
+    oGui.addDir(SITE_IDENTIFIER, 'showLive', sTitle,icons + '/Next.png', oOutputParameterHandler)
     
     oGui.setEndOfDirectory() 
   
@@ -253,7 +283,7 @@ def showLive2():
     aResult = oParser.parse(sHtmlContent, sPattern)
     
    
-    if aResult[0] is True:
+    if aResult[0]:
         for aEntry in aResult[1]:					
             sTitle = aEntry[0] 
             siteUrl = aEntry[1].replace("r.php?url","r2.php?url") 
@@ -279,12 +309,10 @@ def showLive2():
                    sHosterUrl = url 
                    if 'userload' in sHosterUrl:
                       sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
-                   if 'moshahda' in sHosterUrl:
-                      sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN
                    if 'mystream' in sHosterUrl:
                       sHosterUrl = sHosterUrl + "|Referer=" + URL_MAIN  
                    oHoster = cHosterGui().checkHoster(sHosterUrl)
-                   if oHoster != False:
+                   if oHoster:
                       oHoster.setDisplayName(sMovieTitle)
                       oHoster.setFileName(sMovieTitle)
                       cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

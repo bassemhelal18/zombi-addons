@@ -3,8 +3,7 @@
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.hosters.hoster import iHoster
-from resources.lib.comaddon import dialog
-from resources.lib.comaddon import VSlog
+from resources.lib.comaddon import dialog, VSlog
 
 
 class cHoster(iHoster):
@@ -25,7 +24,7 @@ class cHoster(iHoster):
         sPattern = '"(http[^"]+(?:.m3u8|.mp4))"'
         aResult = oParser.parse(sHtmlContent, sPattern)
 
-        if aResult[0] is True:
+        if aResult[0]:
             api_call = ''
 
             # initialisation des tableaux

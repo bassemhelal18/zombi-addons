@@ -8,8 +8,11 @@ from resources.lib.gui.gui import cGui
 from resources.lib.handler.inputParameterHandler import cInputParameterHandler
 from resources.lib.handler.outputParameterHandler import cOutputParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
-from resources.lib.comaddon import progress, siteManager
+from resources.lib.comaddon import siteManager, addon, VSlog
 from resources.lib.parser import cParser
+
+ADDON = addon()
+icons = ADDON.getSetting('defaultIcons')
 
 SITE_IDENTIFIER = 'watanflix'
 SITE_NAME = 'Watanflix'
@@ -20,6 +23,11 @@ URL_MAIN = siteManager().getUrlMain(SITE_IDENTIFIER)
 RAMADAN_SERIES = (URL_MAIN + '/ar/category/%D9%85%D8%B3%D9%84%D8%B3%D9%84%D8%A7%D8%AA', 'showSeries')
 SERIE_AR = (URL_MAIN + '/ar/category/%D9%85%D8%B3%D9%84%D8%B3%D9%84%D8%A7%D8%AA', 'showSeries')
 KID_CARTOON = (URL_MAIN + '/ar/category/%D8%A3%D8%B7%D9%81%D8%A7%D9%84', 'showSerie')
+MOVIES = (URL_MAIN + '/category/%D8%A7%D9%84%D8%A3%D9%81%D9%84%D8%A7%D9%85','showSerie')
+THEATER = (URL_MAIN + '/category/%D9%85%D8%B3%D8%B1%D8%AD%D9%8A%D8%A7%D8%AA','showSerie')
+REPLAYTV_PLAY = (URL_MAIN + '/category/%D8%A8%D8%B1%D8%A7%D9%85%D8%AC','showSerie')
+
+
 
 SERIE_GENRES = (True, 'showGenres')
 
@@ -32,21 +40,34 @@ def load():
 
     oOutputParameterHandler = cOutputParameterHandler()
     oOutputParameterHandler.addParameter('siteUrl', 'http://venom/')
-    oGui.addDir(SITE_IDENTIFIER, 'showSearch', 'Search', 'search.png', oOutputParameterHandler)
+    oGui.addDir(SITE_IDENTIFIER, 'showSearch', 'Search', icons + '/Search.png', oOutputParameterHandler)
 
+    oOutputParameterHandler.addParameter('siteUrl', SERIE_GENRES[0])
+    oGui.addDir(SITE_IDENTIFIER, SERIE_GENRES[1], 'قسم المسلسلات', icons + '/TVShows.png', oOutputParameterHandler)
+    
     oOutputParameterHandler.addParameter('siteUrl', SERIE_AR[0])
-    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'مسلسلات عربية', 'mslsl.png', oOutputParameterHandler)
+    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'مسلسلات عربية', icons + '/Arabic.png', oOutputParameterHandler)
  
     oOutputParameterHandler.addParameter('siteUrl', KID_CARTOON[0])
-    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'مسلسلات كرتون', 'crtoon.png', oOutputParameterHandler) 
+    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'مسلسلات كرتون', icons + '/Cartoon.png', oOutputParameterHandler) 
+
+    oOutputParameterHandler.addParameter('siteUrl', MOVIES[0])
+    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'أفلام عربية', icons + '/Movies.png', oOutputParameterHandler)
+
+    oOutputParameterHandler.addParameter('siteUrl', THEATER[0])
+    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'مسرحيات', icons + '/Theater.png', oOutputParameterHandler)
+    
+    oOutputParameterHandler.addParameter('siteUrl', REPLAYTV_PLAY[0])
+    oGui.addDir(SITE_IDENTIFIER, 'showSeries', 'برامج', icons + '/Movies.png', oOutputParameterHandler)
     
     oGui.setEndOfDirectory()
- 
+     
+    
 def showSearch():
     oGui = cGui()
  
     sSearchText = oGui.showKeyBoard()
-    if sSearchText is not False:
+    if sSearchText:
         sUrl = URL_MAIN + '/ar/search?q='+sSearchText
         showSeriesSearch(sUrl)
         oGui.setEndOfDirectory()
@@ -72,18 +93,13 @@ def showSeriesSearch(sSearch = ''):
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
 	
-    if aResult[0] is True:
-        total = len(aResult[1])
-        progress_ = progress().VScreate(SITE_NAME)
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]:
-            progress_.VSupdate(progress_, total)
-            if progress_.iscanceled():
-                break
  
             sTitle = aEntry[0]
             siteUrl = aEntry[1]
-            sThumb = ""
+            sThumb = ''
             sYear = ""
             sDesc = ""
 
@@ -96,13 +112,12 @@ def showSeriesSearch(sSearch = ''):
 			
             oGui.addTV(SITE_IDENTIFIER, 'showHosters', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
 
-        progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
-            oGui.addDir(SITE_IDENTIFIER, 'showSeriesSearch', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
+            oGui.addDir(SITE_IDENTIFIER, 'showSeriesSearch', '[COLOR teal]Next >>>[/COLOR]', icons + '/Next.png', oOutputParameterHandler)
  
     if not sSearch:
         oGui.setEndOfDirectory()
@@ -117,14 +132,22 @@ def showGenres():
     liste.append( ["كوميدي","https://watanflix.com/ar/type/%D9%83%D9%88%D9%85%D9%8A%D8%AF%D9%8A"] )
     liste.append( ["دراما","https://watanflix.com/ar/type/%D8%AF%D8%B1%D8%A7%D9%85%D8%A7"] )
     liste.append( ["حارة-شامية","https://watanflix.com/ar/type/%D8%AD%D8%A7%D8%B1%D8%A9-%D8%B4%D8%A7%D9%85%D9%8A%D8%A9"] )
-    liste.append( ["تاريخي-سيرة-ذاتيه-وثائقي","https://watanflix.com/ar/type/%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%D9%8A-%D8%B3%D9%8A%D8%B1%D8%A9-%D8%B0%D8%A7%D8%AA%D9%8A%D9%87-%D9%88%D8%AB%D8%A7%D8%A6%D9%82%D9%8A"] )
+    liste.append( ["تاريخي وثائقي","https://watanflix.com/ar/type/%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%D9%8A-%D8%B3%D9%8A%D8%B1%D8%A9-%D8%B0%D8%A7%D8%AA%D9%8A%D9%87-%D9%88%D8%AB%D8%A7%D8%A6%D9%82%D9%8A"] )
     liste.append( ["غموض-تشويق","https://watanflix.com/ar/type/%D8%BA%D9%85%D9%88%D8%B6-%D8%AA%D8%B4%D9%88%D9%8A%D9%82"] )
+    liste.append( ["رومنسي","https://watanflix.com/ar/type/%D8%B1%D9%88%D9%85%D9%86%D8%B3%D9%8A"] )
+    liste.append( ["اجتماعي","https://watanflix.com/ar/type/%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%D9%8A"] )
+    liste.append( ["رعب","https://watanflix.com/ar/type/%D8%B1%D8%B9%D8%A8"] )
+    liste.append( ["اكشن","https://watanflix.com/ar/type/%D8%A3%D9%83%D8%B4%D9%86"] )
+    liste.append( ["رياضي","https://watanflix.com/ar/type/%D8%B1%D9%8A%D8%A7%D8%B6%D9%8A"] )
+    liste.append( ["مقابلا تلفزيونية","https://watanflix.com/ar/type/%D9%85%D9%82%D8%A7%D8%A8%D9%84%D8%A7%D8%AA-%D8%AA%D9%84%D9%81%D8%B2%D9%8A%D9%88%D9%86%D9%8A%D8%A9"] )
+    liste.append( ["ديني","https://watanflix.com/ar/type/%D8%AF%D9%8A%D9%86%D9%8A"] )
+    liste.append( ["طبخ","https://watanflix.com/ar/type/%D8%B7%D8%A8%D8%AE"] )
     
     for sTitle,sUrl in liste:
         
         oOutputParameterHandler = cOutputParameterHandler()
         oOutputParameterHandler.addParameter('siteUrl', sUrl)
-        oGui.addDir(SITE_IDENTIFIER, 'showSeries', sTitle, 'genres.png', oOutputParameterHandler)
+        oGui.addDir(SITE_IDENTIFIER, 'showSeries', sTitle, icons + '/Genres.png', oOutputParameterHandler)
        
     oGui.setEndOfDirectory()  
  
@@ -146,14 +169,9 @@ def showSeries(sSearch = ''):
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
 	
-    if aResult[0] is True:
-        total = len(aResult[1])
-        progress_ = progress().VScreate(SITE_NAME)
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]:
-            progress_.VSupdate(progress_, total)
-            if progress_.iscanceled():
-                break
  
             sTitle = aEntry[3]
             siteUrl = aEntry[2]
@@ -170,13 +188,12 @@ def showSeries(sSearch = ''):
 			
             oGui.addTV(SITE_IDENTIFIER, 'showHosters', sDisplayTitle, '', sThumb, sDesc, oOutputParameterHandler)
 
-        progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
-            oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
+            oGui.addDir(SITE_IDENTIFIER, 'showSeries', '[COLOR teal]Next >>>[/COLOR]', icons + '/Next.png', oOutputParameterHandler)
  
     if not sSearch:
         oGui.setEndOfDirectory()
@@ -199,14 +216,9 @@ def showSerie(sSearch = ''):
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
 	
-    if aResult[0] is True:
-        total = len(aResult[1])
-        progress_ = progress().VScreate(SITE_NAME)
+    if aResult[0]:
         oOutputParameterHandler = cOutputParameterHandler()
         for aEntry in aResult[1]:
-            progress_.VSupdate(progress_, total)
-            if progress_.iscanceled():
-                break
 				
             sTitle = aEntry[2]      
             siteUrl = aEntry[1]
@@ -222,13 +234,12 @@ def showSerie(sSearch = ''):
 			
             oGui.addTV(SITE_IDENTIFIER, 'showHosters', sTitle, '', sThumb, sDesc, oOutputParameterHandler)
 
-        progress_.VSclose(progress_)
  
         sNextPage = __checkForNextPage(sHtmlContent)
-        if sNextPage != False:
+        if sNextPage:
             oOutputParameterHandler = cOutputParameterHandler()
             oOutputParameterHandler.addParameter('siteUrl', sNextPage)
-            oGui.addDir(SITE_IDENTIFIER, 'showSerie', '[COLOR teal]Next >>>[/COLOR]', 'next.png', oOutputParameterHandler)
+            oGui.addDir(SITE_IDENTIFIER, 'showSerie', '[COLOR teal]Next >>>[/COLOR]', icons + '/Next.png', oOutputParameterHandler)
  
     if not sSearch:
         oGui.setEndOfDirectory()
@@ -240,7 +251,7 @@ def __checkForNextPage(sHtmlContent):
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
  
-    if aResult[0] is True:
+    if aResult[0]:
         
         return aResult[1][0]
 
@@ -261,7 +272,7 @@ def showHosters():
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
 	
-    if aResult[0] is True:
+    if aResult[0]:
         for aEntry in aResult[1]:
             
             sTitle = sMovieTitle+aEntry[2].replace("الحلقة "," E")                
@@ -272,7 +283,7 @@ def showHosters():
             
             sHosterUrl = url
             oHoster = cHosterGui().checkHoster(sHosterUrl)
-            if oHoster != False:
+            if oHoster:
                 oHoster.setDisplayName(sTitle)
                 oHoster.setFileName(sTitle)
                 cHosterGui().showHoster(oGui, oHoster, sHosterUrl, sThumb)

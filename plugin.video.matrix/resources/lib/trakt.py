@@ -128,7 +128,7 @@ class cTrakt:
 
             if self.ADDON.getSetting('trakt_show_lists') == 'true':
                 oOutputParameterHandler.addParameter('type', 'custom-lists')
-                oGui.addDir(SITE_IDENTIFIER, 'menuList', "Listes", 'trakt.png', oOutputParameterHandler)
+                oGui.addDir(SITE_IDENTIFIER, 'menuList', "Lists", 'trakt.png', oOutputParameterHandler)
 
             oOutputParameterHandler.addParameter('siteUrl', URL_API + 'users/me/history?page=1&limit=' + str(MAXRESULT))
             oGui.addDir(SITE_IDENTIFIER, 'getTrakt', self.ADDON.VSlang(30308), 'trakt.png', oOutputParameterHandler)
@@ -147,16 +147,16 @@ class cTrakt:
         oOutputParameterHandler = cOutputParameterHandler()
         oOutputParameterHandler.addParameter('siteUrl', 'https://')
         oOutputParameterHandler.addParameter('type', 'lists-tendances')
-        oGui.addDir(SITE_IDENTIFIER, 'getLists', "Listes tendances", 'trakt.png', oOutputParameterHandler)
+        oGui.addDir(SITE_IDENTIFIER, 'getLists', "Trending lists", 'trakt.png', oOutputParameterHandler)
 
         oOutputParameterHandler.addParameter('type', 'lists-pop')
-        oGui.addDir(SITE_IDENTIFIER, 'getLists', "Listes populaires", 'trakt.png', oOutputParameterHandler)
+        oGui.addDir(SITE_IDENTIFIER, 'getLists', "Popular lists", 'trakt.png', oOutputParameterHandler)
 
         oOutputParameterHandler.addParameter('type', 'custom-lists')
         oGui.addDir(SITE_IDENTIFIER, 'getLists', self.ADDON.VSlang(30360), 'trakt.png', oOutputParameterHandler)
 
         oOutputParameterHandler.addParameter('type', 'liked-lists')
-        oGui.addDir(SITE_IDENTIFIER, 'getLists', 'Mes listes aimées', 'trakt.png', oOutputParameterHandler)  
+        oGui.addDir(SITE_IDENTIFIER, 'getLists', 'My Liked Lists', 'trakt.png', oOutputParameterHandler)  
 
         oGui.setEndOfDirectory() 
 
@@ -717,7 +717,11 @@ class cTrakt:
                 oRequestHandler.addHeaderEntry('Authorization', 'Bearer %s' % self.ADDON.getSetting('bstoken'))
                 sHtmlContent = oRequestHandler.request(jsonDecode=True)
 
-            title = next((title for title in sHtmlContent if title['language'].lower() == 'en'), item)['title']
+            for titleSearch in sHtmlContent:
+                if titleSearch['language'].lower() == 'ar':
+                    title = titleSearch['title']
+                if titleSearch['country'].lower() == 'ar':
+                    break
 
             if title is None:
                 return item['title']
@@ -865,7 +869,6 @@ class cTrakt:
         sImdb = oInputParameterHandler.getValue('sImdbId')
         sTMDB = oInputParameterHandler.getValue('sTmdbId')
         sSeason = False
-        sEpisode = False
 
         # Film, serie, anime, saison, episode
         if sType not in ('1', '2', '3', '4', '8'):
@@ -875,24 +878,24 @@ class cTrakt:
 
         # Mettre en vu automatiquement.
         if Action == "SetWatched":
-            sFileName = oInputParameterHandler.getValue('sFileName')
 
             if sType == "shows":
                 if self.ADDON.getSetting('trakt_tvshows_activate_scrobbling') == 'false':
                     return
                 
-                sTitle = oInputParameterHandler.getValue('tvshowtitle')
+                sTitle = oInputParameterHandler.getValue('tvShowTitle')
                 sSeason = oInputParameterHandler.getValue('sSeason')
                 if not sSeason:
                     sSeason = re.search('(?i)( s(?:aison +)*([0-9]+(?:\-[0-9\?]+)*))', sTitle).group(2)
                 if not sEpisode:
                     sEpisode = oInputParameterHandler.getValue('sEpisode')
                 if not sEpisode:
+                    sFileName = oInputParameterHandler.getValue('sFileName')
                     sEpisode = re.search('(?i)(?:^|[^a-z])((?:E|(?:\wpisode\s?))([0-9]+(?:[\-\.][0-9\?]+)*))', sFileName).group(2)
             else:
                 if self.ADDON.getSetting('trakt_movies_activate_scrobbling') == 'false':
                     return
-                sTitle = sFileName
+                sTitle = oInputParameterHandler.getValue('sFileName')
 
             sAction = URL_API + 'sync/history'
 
@@ -998,9 +1001,9 @@ class cTrakt:
         # vire les espaces multiples et on laisse les espaces sans modifs car certains codent avec %20 d'autres avec +
         sMovieTitle = re.sub(' +', ' ', sMovieTitle)
 
-        self.matrixSearch(sMovieTitle)
+        self.vStreamSearch(sMovieTitle)
 
-    def matrixSearch(self, sMovieTitle):
+    def vStreamSearch(self, sMovieTitle):
         oGui = cGui()
 
         oHandler = cRechercheHandler()
@@ -1019,7 +1022,7 @@ class cTrakt:
 
         oRequestHandler = cRequestHandler('https://api.themoviedb.org/3/movie/' + str(sTmdb))
         oRequestHandler.addParameters('api_key', '92ab39516970ab9d86396866456ec9b6')
-        oRequestHandler.addParameters('language', 'fr')
+        oRequestHandler.addParameters('language', 'en')
 
         sHtmlContent = oRequestHandler.request(jsonDecode=True)
 
@@ -1043,9 +1046,6 @@ class cTrakt:
         return
 
     def getTmdbID(self, sTitle, sType):
-
-        oInputParameterHandler = cInputParameterHandler()
-
         from resources.lib.tmdb import cTMDb
         grab = cTMDb()
 
@@ -1054,9 +1054,8 @@ class cTrakt:
         elif sType == 'movies':
             sType = 'movie'
 
-        meta = 0
-        year = ''
         # on cherche l'annee
+        year = ''
         r = re.search('(\([0-9]{4}\))', sTitle)
         if r:
             year = str(r.group(0))
